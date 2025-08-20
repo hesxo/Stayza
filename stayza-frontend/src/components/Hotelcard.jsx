@@ -1,5 +1,5 @@
 import { MapPin, Star } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "./ui/button.jsx";
 import { useState } from "react";
 
 function HotelCard(props) {
