@@ -12,7 +12,7 @@ const heroImages = [
   "https://i.postimg.cc/nLXHHx7S/67d3c92725330.jpg",
   "https://i.postimg.cc/Y2YCGtPJ/Cinnamon-Bentota-Beach-header.jpg",
   "https://i.postimg.cc/sDMK90Yd/R-P-B-H-hd-1400x715-1.webp",
-  "https://i.postimg.cc/c4z9pNxL/490937419.jpghttps://i.postimg.cc/c4z9pNxL/490937419.jpg",
+  "https://i.postimg.cc/c4z9pNxL/490937419.jpg",
   "https://i.postimg.cc/7h9v3t0T/6526649-halcyon-mawella-kotuwaththawewatta-sri-lanka.webp",
 ];
 
@@ -97,29 +97,25 @@ export default function Hero() {
           perfect place for you.
         </p>
 
-        {/* Search Form */}
-        <form onSubmit={handleSearch} className="w-full max-w-md">
-          <div className="relative flex items-center">
-            <div className="relative flex-grow">
-              <Input
-                type="text"
-                name="search"
-                placeholder="Search..." // Short placeholder for mobile
-                className="bg-[#1a1a1a] text-sm sm:text-base text-white placeholder:text-white/70 placeholder:text-sm sm:placeholder:text-base sm:placeholder:content-['Describe_your_destination...'] border-0 rounded-full py-6 pl-4 pr-12 sm:pr-32 w-full transition-all"
-              />
-            </div>
+        {/* Modern Search Form */}
+<form onSubmit={handleSearch} className="w-full max-w-lg">
+  <div className="relative flex items-center p-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl">
+    <Input
+      type="text"
+      name="search"
+      placeholder="Describe your destination or experience..."
+      className="bg-transparent text-white placeholder:text-white/60 border-0 rounded-full py-5 pl-6 pr-36 w-full focus:ring-2 focus:ring-white/40 transition-all"
+    />
+    <button
+  type="submit"
+className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-x-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full px-5 py-2 shadow-md hover:scale-105 transition-transform"
+>
+  <Sparkles className="w-5 h-5" />
+  <span className="font-semibold text-base">AI Search</span>
+</button>
+  </div>
+</form>
 
-            <button
-              type="submit"
-              className="absolute right-2 h-[80%] my-auto bg-black text-white rounded-full px-2 sm:px-4 flex items-center gap-x-2 border-white border-2 hover:bg-white/10 transition-colors"
-            >
-              <Sparkles className="w-4 h-4 fill-white" />
-              <span className="text-sm">AI Search</span>
-            </button>
-          </div>
-        </form>
-
-        {/* Pagination dots */}
         <div className="absolute bottom-6 flex space-x-3">
           {heroImages.map((_, index) => (
             <button

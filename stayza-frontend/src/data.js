@@ -31,10 +31,10 @@ const hotels = [
   },
   {
     _id: "4",
-    name: "Sydney Harbor Hotel",
+    name: "Cinnamon Life Colombo",
     image:
       "https://cf.bstatic.com/xdata/images/hotel/max1280x900/84555265.jpg?k=ce7c3c699dc591b8fbac1a329b5f57247cfa4d13f809c718069f948a4df78b54&o=&hp=1",
-    location: "Sydney, Australia",
+    location: "Colombo, Sri Lanka",
     rating: 4.8,
     reviews: ["K", "L"],
     price: 300,
@@ -44,7 +44,7 @@ const hotels = [
 const locations = [
   { _id: 0, name: "ALL" },
   { _id: 1, name: "France" },
-  { _id: 2, name: "Australia" },
+  { _id: 2, name: "Sri Lanka" },
   { _id: 3, name: "Japan" },
 ];
 
