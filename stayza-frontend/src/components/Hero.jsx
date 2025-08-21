@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Input } from "../components/ui/input.jsx";
+import { Input } from "@/components/ui/input";
 import { Plus, Sparkles } from "lucide-react";
 // import { useDispatch } from "react-redux";
 // import { submit } from "@/lib/features/searchSlice";
