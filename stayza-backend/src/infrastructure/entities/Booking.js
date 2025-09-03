@@ -11,14 +11,23 @@ const bookingSchema = new mongoose.Schema({
         ref: "Hotel",
         required: true,
     },
-    checkInDate: {
+    checkIn: {
         type: Date,
         required: true,
     },
-    checkOutDate: {
+    checkOut: {
         type: Date,
         required: true,
     },
+    roomNumber: {
+        type: Number,
+        required: true,
+    },
+    paymentStatus: {
+        type: String,
+        enum: ["pending", "paid"],
+        default: "pending",
+    }
 });
 
 const Booking = mongoose.model("Booking", bookingSchema);
