@@ -8,7 +8,7 @@ import {
   updateHotel,
   patchHotel,
   deleteHotel,
-} from "./application/hotel.js";
+} from "../application/hotel.js";
 
 const hotelsRouter = express.Router();
 
