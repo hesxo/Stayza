@@ -1,5 +1,6 @@
 import express from "express";
 import hotelsRouter from "./api/hotel.js";
+import connectDB from "./infrastructure/db.js";
 
 const app = express();
 
@@ -67,6 +68,9 @@ app.use("/api/hotels", hotelsRouter);
 //   hotels.splice(index, 1);
 //   res.status(200).send();
 // });
+
+// Initialize database connection
+connectDB();
 
 const PORT = 8000;
 app.listen(PORT, () => {
