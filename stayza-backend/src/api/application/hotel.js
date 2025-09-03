@@ -44,14 +44,18 @@ const hotels = [
   ];
   
   // GET all hotels
-  export const getAllHotels = (req, res) => {
-    res.status(200).json(hotels);
+  export const getAllHotels = async(req, res) => {
+    try {
+      res.status(200).json(hotels);
+    } catch (error) {
+      
+    }
+    
   };
   
   // CREATE a new hotel
   export const createHotel = (req, res) => {
     const hotel = { ...req.body, _id: String(hotels.length + 1) };
-  
     if (!hotel.name || !hotel.image || !hotel.location) {
       return res.status(400).json({ error: "Missing required fields" });
     }
