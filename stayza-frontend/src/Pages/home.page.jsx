@@ -1,7 +1,7 @@
-import Hero from "./components/Hero";
-import Navigation from "./components/Navigation";
+import Hero from "../components/Hero";
+import Navigation from "../components/Navigation";
 
-import HotelListings from "./components/HotelListings";
+import HotelListings from "../components/HotelListings";
 
 function App() {
   return (
