@@ -1,5 +1,3 @@
-// src/api/hotel.js
-
 import express from "express";
 import {
   getAllHotels,
@@ -12,11 +10,13 @@ import {
 
 const hotelsRouter = express.Router();
 
-hotelsRouter.route("/")
+hotelsRouter
+  .route("/")
   .get(getAllHotels)
   .post(createHotel);
 
-hotelsRouter.route("/:_id")
+hotelsRouter
+  .route("/:_id")
   .get(getHotelById)
   .put(updateHotel)
   .patch(patchHotel)

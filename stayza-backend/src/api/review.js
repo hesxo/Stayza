@@ -4,6 +4,6 @@ import { createReview, getReviewsForHotel } from "../application/review.js";
 const reviewRouter = express.Router();
 
 reviewRouter.post("/", createReview);
-reviewRouter.get("/hotel/:hotelId", getReviewsForHotel); //! /api/reviews/hotel/:hotelId
+reviewRouter.get("/hotel/:hotelId", getReviewsForHotel);
 
 export default reviewRouter;
