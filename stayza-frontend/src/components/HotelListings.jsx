@@ -1,10 +1,20 @@
 import HotelCard from "@/components/HotelCard";
-import { hotels, locations } from "@/data";
-import { useState } from "react";
-import LocationTab from "./LocationTab";
+import { locations } from "@/data";
+import { useEffect, useState } from "react";
+import LocationTab from "./LocationTab"
+import { getAllHotels } from "@/lib/api.js";
 
 function HotelListings() {
   const [selectedLocation, setSelectedLocation] = useState(0);
+  const [hotels, setHotels] = useState([]);
+  useEffect(() => {
+    getAllHotels().then((data) => {
+      console.log("HOTELS", data);
+      setHotels(data);
+    }).catch((error) => {
+      console.error("Error fetching hotels:", error);
+    });
+  }, []);
 
   const handleLocationSelect = (selectedLocation) => {
     setSelectedLocation(selectedLocation._id);
