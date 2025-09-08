@@ -1,5 +1,4 @@
 import Hero from "../components/Hero";
-
 import HotelListings from "../components/HotelListings";
 
 function HomePage() {
