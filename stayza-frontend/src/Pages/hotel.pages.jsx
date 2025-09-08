@@ -1,4 +1,4 @@
-const HotelsPage = () => {
+const HotelPage = () => {
   return (
     <main className="px-4">
       <h1 className="text-2xl font-bold">Hotels</h1>
@@ -6,4 +6,4 @@ const HotelsPage = () => {
   );
 };
 
-export default HotelsPage;
+export default HotelPage;
