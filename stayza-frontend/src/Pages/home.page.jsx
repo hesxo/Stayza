@@ -1,7 +1,8 @@
 import Hero from "../components/Hero";
+
 import HotelListings from "../components/HotelListings";
 import { Button } from "@/components/ui/button";
-import { getAllHotels } from "../lib/api.js";
+import { getAllHotels } from "@/lib/api";
 
 function HomePage() {
   return (
@@ -11,7 +12,7 @@ function HomePage() {
       </div>
       <Button
         onClick={() => {
-          getAllHotels();
+           getAllHotels();
         }}
       >
         GET HOTELS
