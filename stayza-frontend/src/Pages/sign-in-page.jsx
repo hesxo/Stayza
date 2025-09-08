@@ -1,8 +1,13 @@
+import Navigation from "@/components/Navigation";
+
 const SignInPage = () => {
   return (
-    <main className="px-4">
-      <h1 className="text-2xl font-bold">Sign In</h1>
-    </main>
+    <>
+      <Navigation />
+      <main className="px-4">
+        <h1 className="text-2xl font-bold">Sign In</h1>
+      </main>
+    </>
   );
 };
 
