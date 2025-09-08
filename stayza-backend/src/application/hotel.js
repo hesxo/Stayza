@@ -65,7 +65,7 @@ export const updateHotel = async (req, res) => {
     }
 
     await Hotel.findByIdAndUpdate(_id, hotelData);
-    res.status(200).send;
+    res.status(200).send();
   } catch (error) {
     res.status(500).send();
   }
