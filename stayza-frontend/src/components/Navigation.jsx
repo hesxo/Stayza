@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 // import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/clerk-react";
 import { Menu, Globe, X } from "lucide-react";
-// import { Link } from "react-router";
+import { Link } from "react-router";
 import { useState, useRef, useEffect } from "react";
 
 function Navigation() {
@@ -47,13 +47,13 @@ function Navigation() {
   return (
     <nav className="z-50 bg-black/90 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 text-white py-3 rounded-full mx-4 my-3 relative">
       <div className="flex items-center space-x-8">
-        <a href="/" className="text-xl font-bold">
+        <Link to="/" className="text-xl font-bold">
           Stayza
-        </a>
+        </Link>
         <div className="hidden md:flex space-x-6">
-          <a href={`/`} className="transition-colors text-sm">
+          <Link to="/" className="transition-colors text-sm">
             Home
-          </a>
+          </Link>
 
           {/* {user?.publicMetadata?.role === "admin" && (
             <a href={`/hotels/create`} className="transition-colors text-sm">
@@ -139,21 +139,21 @@ function Navigation() {
               style={{ top: "calc(100% + 8px)" }}
             >
               <div className="flex flex-col space-y-3 py-2">
-                <a
-                  href="/"
+                <Link
+                  to="/"
                   className="text-sm font-medium hover:text-gray-300 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Home
-                </a>
+                </Link>
                 {user?.publicMetadata?.role === "admin" && (
-                  <a
-                    href="/hotels/create"
+                  <Link
+                    to="/hotels/create"
                     className="text-sm font-medium hover:text-gray-300 transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Create Hotel
-                  </a>
+                  </Link>
                 )}
                 <div className="h-px bg-white/20 my-1"></div>
                 <Button
@@ -181,20 +181,20 @@ function Navigation() {
                     <Link to="/sign-up">Sign Up</Link>
                   </Button>
                 </SignedOut> */}
-                <a
+                <Link
                   href="/sign-in"
                   className="text-sm font-medium hover:text-gray-300 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Log In
-                </a>
+                </Link>
                 <Button
                   size="sm"
                   className="bg-white text-black hover:bg-gray-200 w-full mt-2"
                   asChild
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <a to="/sign-up">Sign Up</a>
+                  <Link to="/sign-up">Sign Up</Link>
                 </Button>
                 {/* <SignedIn>
                   <Button
