@@ -1,20 +1,26 @@
-const getAllHotels = async () => {
-  try {
-    // TODO: Make a GET request to the API
-    const res = await fetch("http://localhost:8000/api/hotels", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await res.json();
-    console.log(data);
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+export const api = createApi({
+  reducerPath: 'api',
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:8000/api/' }),
+  endpoints: (build) => ({
+    getAllHotels: build.query({
+      query: () => 'hotels',
+    }),
+    addLocation: build.mutation({
+      query: (location) => ({
+        url: 'locations',
+        method: 'POST',
+        body: {
+          name: location.name,
+        },
+      }),
+    }),
+    getAllLocations: build.query({
+      query: () => 'locations',
+    }),
+  }),
+})
 
-    // TODO: Return the data
-    return data;
-  } catch (error) {
-    throw new Error("Failed to fetch Hotel");
-  }
-};
-
-export { getAllHotels };
+// Export hooks for usage in functional components, which are
+// auto-generated based on the defined endpoints
+export const { useGetAllHotelsQuery, useAddLocationMutation, useGetAllLocationsQuery } = api
