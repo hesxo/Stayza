@@ -4,6 +4,7 @@ import HomePage from "./Pages/home.page.jsx";
 import SignInPage from "./Pages/sign-in-page.jsx";
 import SignUpPage from "./Pages/sign-up-page.jsx";
 import NotFoundPage from "./Pages/not-found.page.jsx";
+import HotelsPage from "./Pages/hotels.pages.jsx";
 import { BrowserRouter,Routes,Route } from "react-router";
 import RootLayout from "./components/layouts/root-layout-page.jsx";
 
@@ -17,6 +18,8 @@ createRoot(document.getElementById("root")).render(
         <Route index element={<HomePage />} />
         <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
+        <Route path="/hotels"  element={<HotelsPage />} />
+        {/* <Route path="/hotels/:_id" element={<HotelDetailsPage />} /> */}
         </Route>
         <Route path="*" element={<NotFoundPage />} />
     </Routes>
