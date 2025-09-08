@@ -10,13 +10,13 @@ function HomePage() {
       <div className="relative min-h-[85vh]">
         <Hero />
       </div>
-      <Button
+      {/* <Button
         onClick={() => {
            getAllHotels();
         }}
       >
         GET HOTELS
-      </Button>
+      </Button> */}
       <HotelListings />
     </main>
   );
