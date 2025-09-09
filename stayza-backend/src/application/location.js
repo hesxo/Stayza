@@ -16,9 +16,32 @@ export const createLocation = async (req, res) => {
       res.status(400).send();
       return;
     }
-    await Location.create(locationData);
-    res.status(201).send();
+
+    const existing = await Location.findOne({ name: locationData.name });
+    if (existing) {
+      res.status(200).json(existing);
+      return;
+    }
+
+    const created = await Location.create({ name: locationData.name });
+    res.status(201).json(created);
   } catch (error) {
+    const isDuplicate =
+      (error && error.code === 11000) ||
+      (error && error.name === "MongoServerError" && error.message && error.message.includes("E11000")) ||
+      (error && typeof error.message === "string" && error.message.toLowerCase().includes("duplicate key"));
+
+    if (isDuplicate) {
+      const existing = await Location.findOne({ name: req.body?.name });
+      if (existing) {
+        res.status(200).json(existing);
+        return;
+      }
+      res.status(409).json({ message: "Location already exists" });
+      return;
+    }
+
+    console.error("Error creating location:", error);
     res.status(500).send();
   }
 };
@@ -92,4 +115,4 @@ export const deleteLocation = async (req, res) => {
   } catch (error) {
     res.status(500).send();
   }
-};
+}; 

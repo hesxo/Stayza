@@ -134,7 +134,7 @@ const reviews = [
 ];
 
 // Sample locations data (extracted from hotel locations)
-constn = [
+const locations = [
   { name: "France" },
   { name: "Australia" },
   { name: "Japan" }

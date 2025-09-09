@@ -61,12 +61,14 @@ function HotelListings() {
   const error = [hotelsError, locationsError];
 
   const handleAddLocation = async () => {
+    const toastId = toast.loading("Adding location...");
     try {
-      toast.loading("Adding location...");
       await addLocation({ name: "Fiji" }).unwrap();
       toast.success("Location added successfully");
+      toast.dismiss(toastId);
     } catch (error) {
       toast.error("Failed to add location");
+      toast.dismiss(toastId);
     }
   };
 
