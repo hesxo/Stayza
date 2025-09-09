@@ -1,6 +1,7 @@
 import { Outlet } from "react-router";
 import { useUser } from "@clerk/clerk-react";
 import { Navigate } from "react-router";
+import counterReducer from "./features/counterSlice";
 
 const ProtectLayout = () => {
   const { isLoaded, isSignedIn, user } = useUser();
