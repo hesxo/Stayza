@@ -11,10 +11,16 @@ const reviewSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  userId: {
+  userId:{
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
+  // hotelId: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "Hotel",
+  //   required: true,
+  // },
 });
 
 const Review = mongoose.model("Review", reviewSchema);
