@@ -6,7 +6,7 @@ import SignUpPage from "./Pages/sign-up-page.jsx";
 import NotFoundPage from "./Pages/not-found.page.jsx";
 import HotelPage from "./Pages/hotel.pages.jsx";
 import HotelDetailPage from "./Pages/hotel.details.page.jsx";
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import RootLayout from "./components/layouts/root-layout-page.jsx";
 import { Provider } from "react-redux";
 import { store } from "./lib/store"; 

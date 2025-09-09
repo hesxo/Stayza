@@ -1,12 +1,15 @@
 import UnauthorizedError from "../../domain/errors/unauthorized-error.js";
 
 const isAuthenticated = (req, res, next) => {
-  // console.log(req.auth()); // If the authorization header is not present or clerk BE tells it is invalid, this will return null
-  console.log("IS_AUTHENTICATED", req.auth().isAuthenticated);
-  if (!req.auth().isAuthenticated) {
-    throw new UnauthorizedError("Unauthorized");
+  try {
+    const auth = typeof req.auth === "function" ? req.auth() : { isAuthenticated: false };
+    if (auth && auth.isAuthenticated === false) {
+      throw new UnauthorizedError("Unauthorized");
+    }
+    next();
+  } catch (err) {
+    next(err);
   }
-  next();
 };
 
 export default isAuthenticated;

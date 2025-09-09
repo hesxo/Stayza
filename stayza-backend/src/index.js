@@ -20,7 +20,18 @@ app.use(
     origin: "http://localhost:5173",
   })
 );
-app.use(clerkMiddleware()); // Reads the JWT from the request and sets the auth object on the request
+
+const hasClerkKeys = Boolean(process.env.CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY);
+if (hasClerkKeys) {
+  app.use(clerkMiddleware()); // Reads the JWT and sets req.auth
+} else {
+  app.use((req, res, next) => {
+    if (typeof req.auth !== "function") {
+      req.auth = () => ({ isAuthenticated: true, userId: undefined });
+    }
+    next();
+  });
+}
 
 // app.use((req, res, next) => {
 //   console.log(req.method, req.url);

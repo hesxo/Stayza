@@ -9,11 +9,68 @@ import { Building2 } from "lucide-react";
 import { Tv } from "lucide-react";
 import { Coffee } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useGetHotelByIdQuery } from "@/lib/api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const HotelDetailsPage = () => {
   const { _id } = useParams();
-  
-  const hotel = hotels.find((hotel) => hotel._id === _id);
+  const { data: hotel, isLoading, isError, error } = useGetHotelByIdQuery(_id);
+
+  if (isLoading) {
+    return (
+      <main className="px-4">
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="space-y-4">
+            <div className="relative w-full h-[400px]">
+              <Skeleton className="w-full h-full rounded-lg" />
+            </div>
+            <div className="flex space-x-2">
+              <Skeleton className="h-6 w-24" />
+              <Skeleton className="h-6 w-24" />
+              <Skeleton className="h-6 w-24" />
+            </div>
+          </div>
+          <div className="space-y-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <Skeleton className="h-9 w-48" />
+                <div className="flex items-center mt-2">
+                  <Skeleton className="h-5 w-5 mr-1" />
+                  <Skeleton className="h-5 w-32" />
+                </div>
+              </div>
+              <Skeleton className="h-10 w-10 rounded-lg" />
+            </div>
+            <Skeleton className="h-6 w-36" />
+            <Skeleton className="h-24 w-full" />
+            <Card>
+              <CardContent className="p-4">
+                <Skeleton className="h-7 w-32 mb-4" />
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-6 w-28" />
+                  <Skeleton className="h-6 w-28" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <h2 className="text-2xl font-bold text-destructive mb-4">
+          Error Loading Hotel Details
+        </h2>
+        <p className="text-muted-foreground">
+          {error?.data?.message ||
+            "Something went wrong. Please try again later."}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <main className="px-4">
@@ -50,7 +107,8 @@ const HotelDetailsPage = () => {
             <Star className="h-5 w-5 fill-primary text-primary" />
             <span className="font-bold">{hotel?.rating ?? "No rating"}</span>
             <span className="text-muted-foreground">
-              ({hotel?.reviews.length === 0 ? "No" : hotel?.reviews.length} reviews)
+              ({hotel?.reviews.length === 0 ? "No" : hotel?.reviews.length}{" "}
+              reviews)
             </span>
           </div>
           <p className="text-muted-foreground">{hotel.description}</p>
