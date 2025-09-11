@@ -2,6 +2,7 @@ import Review from "../infrastructure/entities/Review.js";
 import Hotel from "../infrastructure/entities/Hotel.js";
 import NotFoundError from "../domain/errors/not-found-error.js";
 import ValidationError from "../domain/errors/validation-error.js";
+import UnauthorizedError from "../domain/errors/unauthorized-error.js";
 
 // const createReview = async (req, res) => {
 //   try {
@@ -24,6 +25,12 @@ const createReview = async (req, res, next) => {
       throw new ValidationError("Rating, comment, and hotelId are required");
     }
 
+    const auth = typeof req.auth === "function" ? req.auth() : { userId: undefined };
+    const userId = auth.userId;
+    if (!userId) {
+      throw new UnauthorizedError("Unauthorized");
+    }
+
     const hotel = await Hotel.findById(reviewData.hotelId);
     if (!hotel) {
       throw new NotFoundError("Hotel not found");
@@ -32,6 +39,7 @@ const createReview = async (req, res, next) => {
     const review = await Review.create({
       rating: reviewData.rating,
       comment: reviewData.comment,
+      userId,
     });
 
     hotel.reviews.push(review._id);
