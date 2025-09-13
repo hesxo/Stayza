@@ -38,7 +38,7 @@ function HotelListings() {
   ] = useAddLocationMutation();
 
   const allLocations = locations
-    ? [{ _id: 0, name: "All" }, ...locations]
+    ? [{ _id: 0, name: "All" }, ...locations.filter((loc) => loc.name !== "lol")]
     : [{ _id: 0, name: "All" }];
 
   const handleLocationSelect = (selectedLocation) => {
@@ -65,7 +65,9 @@ function HotelListings() {
     try {
       await addLocation({ name: "Fiji" }).unwrap();
       toast.success("Location added successfully");
-      toast.dismiss(toastId);
+      toast.dismiss(toastId);      const allLocations = locations
+        ? [{ _id: 0, name: "All" }, ...locations.filter(loc => loc.name !== "lol")]
+        : [{ _id: 0, name: "All" }];
     } catch (error) {
       toast.error("Failed to add location");
       toast.dismiss(toastId);
