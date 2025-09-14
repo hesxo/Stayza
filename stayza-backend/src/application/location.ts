@@ -27,7 +27,7 @@ export const getAllLocations = async (req: Request, res: Response, next: NextFun
 
 export const createLocation = async (req: RequestWithAuth, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const userId: string = req.auth().userId;
+    const userId: string = req.auth?.()?.userId || '';
     console.log("USER_ID", userId);
 
     const locationData: LocationData = req.body;

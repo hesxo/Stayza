@@ -1,8 +1,8 @@
-import Review from "../infrastructure/entities/Review.js";
-import Hotel from "../infrastructure/entities/Hotel.js";
-import NotFoundError from "../domain/errors/not-found-error.js";
-import ValidationError from "../domain/errors/validation-error.js";
-import UnauthorizedError from "../domain/errors/unauthorized-error.js";
+import Review from "../infrastructure/entities/Review";
+import Hotel from "../infrastructure/entities/Hotel";
+import NotFoundError from "../domain/errors/not-found-error";
+import ValidationError from "../domain/errors/validation-error";
+import UnauthorizedError from "../domain/errors/unauthorized-error";
 import { Request, Response, NextFunction } from "express";
 
 interface ReviewData {
