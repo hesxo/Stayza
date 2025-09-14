@@ -3,7 +3,6 @@ import Review from "../infrastructure/entities/Review";
 import Hotel from "../infrastructure/entities/Hotel";
 import NotFoundError from "../domain/errors/not-found-error";
 import ValidationError from "../domain/errors/validation-error";
-import { getAuth } from "@clerk/express";
 
 const createReview = async (
   req: Request,
@@ -16,7 +15,7 @@ const createReview = async (
       throw new ValidationError("Rating, comment, and hotelId are required");
     }
 
-    const { userId } = getAuth(req);
+    const userId = (req as any).userId as string;
 
     const hotel = await Hotel.findById(reviewData.hotelId);
     if (!hotel) {

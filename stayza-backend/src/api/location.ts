@@ -8,13 +8,14 @@ import {
   deleteLocation,
 } from "../application/location";
 import isAuthenticated from "./middleware/authentication-middleware";
+import { clerkMiddleware } from "@clerk/express";
 
 const locationsRouter = express.Router();
 
 locationsRouter
   .route("/")
   .get(getAllLocations)
-  .post(isAuthenticated, createLocation);
+  .post(clerkMiddleware(), isAuthenticated, createLocation);
 
 locationsRouter
   .route("/:_id")

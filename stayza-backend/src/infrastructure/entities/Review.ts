@@ -12,7 +12,7 @@ const reviewSchema = new mongoose.Schema({
     required: true,
   },
   userId: {
-    type: String,
+    type: String, //! clerk userIds are passed
     required: true,
   },
   // hotelId: {

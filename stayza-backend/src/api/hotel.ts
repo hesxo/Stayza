@@ -8,13 +8,14 @@ import {
   deleteHotel,
 } from "../application/hotel";
 import isAuthenticated from "./middleware/authentication-middleware";
+import { clerkMiddleware } from "@clerk/express";
 
 const hotelsRouter = express.Router();
 
 hotelsRouter
   .route("/")
   .get(getAllHotels)
-  .post(isAuthenticated, createHotel);
+  .post(clerkMiddleware(), isAuthenticated, createHotel);
 
 hotelsRouter
   .route("/:_id")
