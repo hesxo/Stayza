@@ -1,6 +1,6 @@
-import Hotel from "../infrastructure/entities/Hotel.js";
-import NotFoundError from "../domain/errors/not-found-error.js";
-import ValidationError from "../domain/errors/validation-error.js";
+import Hotel from "../infrastructure/entities/Hotel";
+import NotFoundError from "../domain/errors/not-found-error";
+import ValidationError from "../domain/errors/validation-error";
 import { Request, Response, NextFunction } from "express";
 
 interface HotelData {

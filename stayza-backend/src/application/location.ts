@@ -1,6 +1,6 @@
-import Location from "../infrastructure/entities/Location.js";
-import NotFoundError from "../domain/errors/not-found-error.js";
-import ValidationError from "../domain/errors/validation-error.js";
+import Location from "../infrastructure/entities/Location";
+import NotFoundError from "../domain/errors/not-found-error";
+import ValidationError from "../domain/errors/validation-error";
 import { Request, Response, NextFunction } from "express";
 
 interface LocationData {
