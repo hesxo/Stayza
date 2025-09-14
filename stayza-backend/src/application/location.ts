@@ -1,8 +1,21 @@
 import Location from "../infrastructure/entities/Location.js";
 import NotFoundError from "../domain/errors/not-found-error.js";
 import ValidationError from "../domain/errors/validation-error.js";
+import { Request, Response, NextFunction } from "express";
 
-export const getAllLocations = async (req, res, next) => {
+interface LocationData {
+  name: string;
+}
+
+interface AuthData {
+  userId?: string;
+}
+
+interface RequestWithAuth extends Request {
+  auth?: () => AuthData;
+}
+
+export const getAllLocations = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const locations = await Location.find();
     res.status(200).json(locations);
@@ -12,12 +25,12 @@ export const getAllLocations = async (req, res, next) => {
   }
 };
 
-export const createLocation = async (req, res, next) => {
+export const createLocation = async (req: RequestWithAuth, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const userId = req.auth().userId;
+    const userId: string = req.auth().userId;
     console.log("USER_ID", userId);
 
-    const locationData = req.body;
+    const locationData: LocationData = req.body;
     if (!locationData.name) {
       throw new ValidationError("Location name is required");
     }
@@ -28,9 +41,9 @@ export const createLocation = async (req, res, next) => {
   }
 };
 
-export const getLocationById = async (req, res, next) => {
+export const getLocationById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const _id = req.params._id;
+    const _id: string = req.params._id;
     const location = await Location.findById(_id);
     if (!location) {
       throw new NotFoundError("Location not found");
@@ -41,10 +54,10 @@ export const getLocationById = async (req, res, next) => {
   }
 };
 
-export const updateLocation = async (req, res, next) => {
+export const updateLocation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const _id = req.params._id;
-    const locationData = req.body;
+    const _id: string = req.params._id;
+    const locationData: LocationData = req.body;
     if (!locationData.name) {
       throw new ValidationError("Location name is required");
     }
@@ -61,10 +74,10 @@ export const updateLocation = async (req, res, next) => {
   }
 };
 
-export const patchLocation = async (req, res, next) => {
+export const patchLocation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const _id = req.params._id;
-    const locationData = req.body;
+    const _id: string = req.params._id;
+    const locationData: LocationData = req.body;
     if (!locationData.name) {
       throw new ValidationError("Location name is required");
     }
@@ -79,9 +92,9 @@ export const patchLocation = async (req, res, next) => {
   }
 };
 
-export const deleteLocation = async (req, res, next) => {
+export const deleteLocation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const _id = req.params._id;
+    const _id: string = req.params._id;
     const location = await Location.findById(_id);
     if (!location) {
       throw new NotFoundError("Location not found");

@@ -3,30 +3,31 @@ import Hotel from "../infrastructure/entities/Hotel.js";
 import NotFoundError from "../domain/errors/not-found-error.js";
 import ValidationError from "../domain/errors/validation-error.js";
 import UnauthorizedError from "../domain/errors/unauthorized-error.js";
+import { Request, Response, NextFunction } from "express";
 
-// const createReview = async (req, res) => {
-//   try {
-//     const reviewData = req.body;
-//     if (!reviewData.rating || !reviewData.comment || !reviewData.hotelId) {
-//       res.status(400).send();
-//       return;
-//     }
-//     await Review.create(reviewData);
-//     res.status(201).send();
-//   } catch (error) {
-//     res.status(500).send();
-//   }
-// };
+interface ReviewData {
+  rating: number;
+  comment: string;
+  hotelId: string;
+}
 
-const createReview = async (req, res, next) => {
+interface AuthData {
+  userId?: string;
+}
+
+interface RequestWithAuth extends Request {
+  auth?: () => AuthData;
+}
+
+const createReview = async (req: RequestWithAuth, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const reviewData = req.body;
+    const reviewData: ReviewData = req.body;
     if (!reviewData.rating || !reviewData.comment || !reviewData.hotelId) {
       throw new ValidationError("Rating, comment, and hotelId are required");
     }
 
-    const auth = typeof req.auth === "function" ? req.auth() : { userId: undefined };
-    const userId = auth.userId;
+    const auth: AuthData = typeof req.auth === "function" ? req.auth() : { userId: undefined };
+    const userId: string | undefined = auth.userId;
     if (!userId) {
       throw new UnauthorizedError("Unauthorized");
     }
@@ -50,26 +51,9 @@ const createReview = async (req, res, next) => {
   }
 };
 
-// const getReviewsForHotel = async (req, res) => {
-//   try {
-//     const hotelId = req.params.hotelId;
-//     const hotel = await Hotel.findById(hotelId);
-//     if (!hotel) {
-//       res.status(404).send();
-//       return;
-//     }
-
-//     const reviews = await Review.find({ hotelId: hotelId });
-
-//     res.status(200).json(reviews);
-//   } catch (error) {
-//     res.status(500).send();
-//   }
-// };
-
-const getReviewsForHotel = async (req, res, next) => {
+const getReviewsForHotel = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const hotelId = req.params.hotelId;
+      const hotelId: string = req.params.hotelId;
       const hotel = await Hotel.findById(hotelId).populate("reviews");
       if (!hotel) {
         throw new NotFoundError("Hotel not found");
@@ -80,6 +64,5 @@ const getReviewsForHotel = async (req, res, next) => {
       next(error);
     }
   };
-
 
 export { createReview, getReviewsForHotel };

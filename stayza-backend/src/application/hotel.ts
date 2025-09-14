@@ -2,7 +2,16 @@ import Hotel from "../infrastructure/entities/Hotel.js";
 import NotFoundError from "../domain/errors/not-found-error.js";
 import ValidationError from "../domain/errors/validation-error.js";
 import { Request, Response, NextFunction } from "express";
-export const getAllHotels = async (req, res, next) => {
+
+interface HotelData {
+  name: string;
+  image: string;
+  location: string;
+  price: number;
+  description: string;
+}
+
+export const getAllHotels = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const hotels = await Hotel.find();
     res.status(200).json(hotels);
@@ -12,9 +21,9 @@ export const getAllHotels = async (req, res, next) => {
   }
 };
 
-export const createHotel = async (req, res, next) => {
+export const createHotel = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const hotelData = req.body;
+    const hotelData: HotelData = req.body;
     if (
       !hotelData.name ||
       !hotelData.image ||
@@ -31,9 +40,9 @@ export const createHotel = async (req, res, next) => {
   }
 };
 
-export const getHotelById = async (req, res, next) => {
+export const getHotelById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const _id = req.params._id;
+    const _id: string = req.params._id;
     const hotel = await Hotel.findById(_id);
     if (!hotel) {
       throw new NotFoundError("Hotel not found");
@@ -44,10 +53,10 @@ export const getHotelById = async (req, res, next) => {
   }
 };
 
-export const updateHotel = async (req, res, next) => {
+export const updateHotel = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const _id = req.params._id;
-    const hotelData = req.body;
+    const _id: string = req.params._id;
+    const hotelData: HotelData = req.body;
     if (
       !hotelData.name ||
       !hotelData.image ||
@@ -70,10 +79,10 @@ export const updateHotel = async (req, res, next) => {
   }
 };
 
-export const patchHotel = async (req, res, next) => {
+export const patchHotel = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const _id = req.params._id;
-    const hotelData = req.body;
+    const _id: string = req.params._id;
+    const hotelData: { price: number } = req.body;
     if (!hotelData.price) {
       throw new ValidationError("Price is required");
     }
@@ -88,9 +97,9 @@ export const patchHotel = async (req, res, next) => {
   }
 };
 
-export const deleteHotel = async (req, res, next) => {
+export const deleteHotel = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const _id = req.params._id;
+    const _id: string = req.params._id;
     const hotel = await Hotel.findById(_id);
     if (!hotel) {
       throw new NotFoundError("Hotel not found");
