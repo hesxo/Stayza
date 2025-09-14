@@ -5,14 +5,35 @@ import { Request, Response, NextFunction } from "express";
 
 interface LocationData {
   name: string;
+  description?: string;
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
 interface AuthData {
-  userId?: string;
+  userId: string;
 }
 
 interface RequestWithAuth extends Request {
-  auth?: () => AuthData;
+  auth: () => AuthData;
+}
+
+interface LocationParams {
+  _id: string;
+}
+
+interface LocationResponse {
+  _id: string;
+  name: string;
+  description?: string;
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const getAllLocations = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -27,7 +48,13 @@ export const getAllLocations = async (req: Request, res: Response, next: NextFun
 
 export const createLocation = async (req: RequestWithAuth, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const userId: string = req.auth?.()?.userId || '';
+    const authData: AuthData = req.auth();
+    const userId: string = authData.userId;
+    
+    if (!userId) {
+      throw new ValidationError("User authentication required");
+    }
+    
     console.log("USER_ID", userId);
 
     const locationData: LocationData = req.body;
@@ -41,9 +68,9 @@ export const createLocation = async (req: RequestWithAuth, res: Response, next: 
   }
 };
 
-export const getLocationById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getLocationById = async (req: Request<LocationParams>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const _id: string = req.params._id;
+    const { _id }: LocationParams = req.params;
     const location = await Location.findById(_id);
     if (!location) {
       throw new NotFoundError("Location not found");
@@ -54,9 +81,9 @@ export const getLocationById = async (req: Request, res: Response, next: NextFun
   }
 };
 
-export const updateLocation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const updateLocation = async (req: Request<LocationParams>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const _id: string = req.params._id;
+    const { _id }: LocationParams = req.params;
     const locationData: LocationData = req.body;
     if (!locationData.name) {
       throw new ValidationError("Location name is required");
@@ -74,9 +101,9 @@ export const updateLocation = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-export const patchLocation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const patchLocation = async (req: Request<LocationParams>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const _id: string = req.params._id;
+    const { _id }: LocationParams = req.params;
     const locationData: LocationData = req.body;
     if (!locationData.name) {
       throw new ValidationError("Location name is required");
@@ -92,9 +119,9 @@ export const patchLocation = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-export const deleteLocation = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const deleteLocation = async (req: Request<LocationParams>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const _id: string = req.params._id;
+    const { _id }: LocationParams = req.params;
     const location = await Location.findById(_id);
     if (!location) {
       throw new NotFoundError("Location not found");

@@ -12,24 +12,46 @@ interface ReviewData {
 }
 
 interface AuthData {
-  userId?: string;
+  userId: string;
 }
 
 interface RequestWithAuth extends Request {
-  auth?: () => AuthData;
+  auth: () => AuthData;
+}
+
+interface ReviewParams {
+  hotelId: string;
+}
+
+interface ReviewResponse {
+  _id: string;
+  rating: number;
+  comment: string;
+  userId: string;
+  hotelId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const createReview = async (req: RequestWithAuth, res: Response, next: NextFunction): Promise<void> => {
   try {
     const reviewData: ReviewData = req.body;
+    
+    // Validate input data
     if (!reviewData.rating || !reviewData.comment || !reviewData.hotelId) {
       throw new ValidationError("Rating, comment, and hotelId are required");
     }
+    
+    if (reviewData.rating < 1 || reviewData.rating > 5) {
+      throw new ValidationError("Rating must be between 1 and 5");
+    }
 
-    const auth: AuthData = typeof req.auth === "function" ? req.auth() : { userId: undefined };
-    const userId: string | undefined = auth.userId;
+    // Get authenticated user
+    const authData: AuthData = req.auth();
+    const userId: string = authData.userId;
+    
     if (!userId) {
-      throw new UnauthorizedError("Unauthorized");
+      throw new UnauthorizedError("Authentication required");
     }
 
     const hotel = await Hotel.findById(reviewData.hotelId);
@@ -51,9 +73,9 @@ const createReview = async (req: RequestWithAuth, res: Response, next: NextFunct
   }
 };
 
-const getReviewsForHotel = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const getReviewsForHotel = async (req: Request<ReviewParams>, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const hotelId: string = req.params.hotelId;
+      const { hotelId }: ReviewParams = req.params;
       const hotel = await Hotel.findById(hotelId).populate("reviews");
       if (!hotel) {
         throw new NotFoundError("Hotel not found");
