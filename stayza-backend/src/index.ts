@@ -9,7 +9,7 @@ import reviewRouter from "./api/review";
 import locationsRouter from "./api/location";
 import globalErrorHandlingMiddleware from "./api/middleware/global-error-handling-middleware";
 
-import { clerkMiddleware } from "@clerk/express";
+// Clerk is used via route-level getAuth in our middleware
 
 const app = express();
 
@@ -20,7 +20,8 @@ app.use(
     origin: "http://localhost:5173",
   })
 );
-app.use(clerkMiddleware()); // Reads the JWT from the request and sets the auth object on the request
+// Note: We are not using global clerkMiddleware here so that
+// public GET routes remain accessible even if Clerk is misconfigured.
 
 // app.use((req, res, next) => {
 //   console.log(req.method, req.url);
