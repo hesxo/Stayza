@@ -3,40 +3,11 @@ import NotFoundError from "../domain/errors/not-found-error";
 import ValidationError from "../domain/errors/validation-error";
 import { Request, Response, NextFunction } from "express";
 
-interface LocationData {
-  name: string;
-  description?: string;
-  coordinates?: {
-    latitude: number;
-    longitude: number;
-  };
-}
-
-interface AuthData {
-  userId: string;
-}
-
-interface RequestWithAuth extends Request {
-  auth: () => AuthData;
-}
-
-interface LocationParams {
-  _id: string;
-}
-
-interface LocationResponse {
-  _id: string;
-  name: string;
-  description?: string;
-  coordinates?: {
-    latitude: number;
-    longitude: number;
-  };
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export const getAllLocations = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getAllLocations = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const locations = await Location.find();
     res.status(200).json(locations);
@@ -46,18 +17,13 @@ export const getAllLocations = async (req: Request, res: Response, next: NextFun
   }
 };
 
-export const createLocation = async (req: RequestWithAuth, res: Response, next: NextFunction): Promise<void> => {
+export const createLocation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const authData: AuthData = req.auth();
-    const userId: string = authData.userId;
-    
-    if (!userId) {
-      throw new ValidationError("User authentication required");
-    }
-    
-    console.log("USER_ID", userId);
-
-    const locationData: LocationData = req.body;
+    const locationData = req.body;
     if (!locationData.name) {
       throw new ValidationError("Location name is required");
     }
@@ -68,9 +34,13 @@ export const createLocation = async (req: RequestWithAuth, res: Response, next: 
   }
 };
 
-export const getLocationById = async (req: Request<LocationParams>, res: Response, next: NextFunction): Promise<void> => {
+export const getLocationById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { _id }: LocationParams = req.params;
+    const _id = req.params._id;
     const location = await Location.findById(_id);
     if (!location) {
       throw new NotFoundError("Location not found");
@@ -81,10 +51,14 @@ export const getLocationById = async (req: Request<LocationParams>, res: Respons
   }
 };
 
-export const updateLocation = async (req: Request<LocationParams>, res: Response, next: NextFunction): Promise<void> => {
+export const updateLocation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { _id }: LocationParams = req.params;
-    const locationData: LocationData = req.body;
+    const _id = req.params._id;
+    const locationData = req.body;
     if (!locationData.name) {
       throw new ValidationError("Location name is required");
     }
@@ -101,10 +75,14 @@ export const updateLocation = async (req: Request<LocationParams>, res: Response
   }
 };
 
-export const patchLocation = async (req: Request<LocationParams>, res: Response, next: NextFunction): Promise<void> => {
+export const patchLocation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { _id }: LocationParams = req.params;
-    const locationData: LocationData = req.body;
+    const _id = req.params._id;
+    const locationData = req.body;
     if (!locationData.name) {
       throw new ValidationError("Location name is required");
     }
@@ -119,9 +97,13 @@ export const patchLocation = async (req: Request<LocationParams>, res: Response,
   }
 };
 
-export const deleteLocation = async (req: Request<LocationParams>, res: Response, next: NextFunction): Promise<void> => {
+export const deleteLocation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const { _id }: LocationParams = req.params;
+    const _id = req.params._id;
     const location = await Location.findById(_id);
     if (!location) {
       throw new NotFoundError("Location not found");
