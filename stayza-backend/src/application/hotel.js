@@ -1,7 +1,7 @@
 import Hotel from "../infrastructure/entities/Hotel.js";
 import NotFoundError from "../domain/errors/not-found-error.js";
 import ValidationError from "../domain/errors/validation-error.js";
-
+import { Request, Response, NextFunction } from "express";
 export const getAllHotels = async (req, res, next) => {
   try {
     const hotels = await Hotel.find();
