@@ -1,24 +1,14 @@
 import UnauthorizedError from "../../domain/errors/unauthorized-error";
 import { Request, Response, NextFunction } from "express";
-import { getAuth } from "@clerk/express";
 
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-  let auth: ReturnType<typeof getAuth> | undefined;
-  try {
-    auth = getAuth(req);
-  } catch (e) {
-    // Clerk middleware not initialized; treat as unauthenticated
+  // console.log(req.auth()); // If the authorization header is not present or clerk BE tells it is invalid, this will return null
+  const authData = req.auth();
+  console.log("AUTH_OBJECT", authData);
+  console.log("IS_AUTHENTICATED", authData.isAuthenticated);
+  if (!authData.isAuthenticated) {
     throw new UnauthorizedError("Unauthorized");
   }
-  console.log("AUTH_OBJECT", auth);
-
-  if (!auth || !auth.userId) {
-    throw new UnauthorizedError("Unauthorized");
-  }
-
-  // Expose userId to downstream handlers without re-calling getAuth
-  (req as any).userId = auth.userId;
-
   next();
 };
 

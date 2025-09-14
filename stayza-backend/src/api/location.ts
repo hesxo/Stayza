@@ -1,27 +1,10 @@
 import express from "express";
-import {
-  getAllLocations,
-  createLocation,
-  getLocationById,
-  updateLocation,
-  patchLocation,
-  deleteLocation,
-} from "../application/location";
+import { createReview, getReviewsForHotel } from "../application/review";
 import isAuthenticated from "./middleware/authentication-middleware";
-import { clerkMiddleware } from "@clerk/express";
 
-const locationsRouter = express.Router();
+const reviewRouter = express.Router();
 
-locationsRouter
-  .route("/")
-  .get(getAllLocations)
-  .post(clerkMiddleware(), isAuthenticated, createLocation);
+reviewRouter.route("/").post(isAuthenticated, createReview);
+reviewRouter.route("/hotel/:hotelId").get(isAuthenticated, getReviewsForHotel); //! /api/reviews/hotel/:hotelId
 
-locationsRouter
-  .route("/:_id")
-  .get(getLocationById)
-  .put(updateLocation)
-  .patch(patchLocation)
-  .delete(deleteLocation);
-
-export default locationsRouter; 
+export default reviewRouter;
