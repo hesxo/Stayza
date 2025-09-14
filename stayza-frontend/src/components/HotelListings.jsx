@@ -1,15 +1,9 @@
 import HotelCard from "@/components/HotelCard";
-import {
-  useGetAllHotelsQuery,
-  useGetAllLocationsQuery,
-  useAddLocationMutation,
-} from "@/lib/api";
-import { Skeleton } from "./ui/skeleton";
+import { useGetAllHotelsQuery, useGetAllLocationsQuery } from "@/lib/api";
 import { useState } from "react";
-import LocationTab from "./LocationTab";
-import { Button } from "./ui/button";
-import { PlusCircle } from "lucide-react";
 import { toast } from "sonner";
+import LocationTab from "./LocationTab";
+import { Skeleton } from "./ui/skeleton";
 
 function HotelListings() {
   const [selectedLocation, setSelectedLocation] = useState(0);
@@ -28,17 +22,8 @@ function HotelListings() {
     error: locationsError,
   } = useGetAllLocationsQuery();
 
-  const [
-    addLocation,
-    {
-      isLoading: isAddLocationLoading,
-      isError: isAddLocationError,
-      error: addLocationError,
-    },
-  ] = useAddLocationMutation();
-
   const allLocations = locations
-    ? [{ _id: 0, name: "All" }, ...locations.filter((loc) => loc.name !== "lol")]
+    ? [{ _id: 0, name: "All" }, ...locations]
     : [{ _id: 0, name: "All" }];
 
   const handleLocationSelect = (selectedLocation) => {
@@ -59,20 +44,6 @@ function HotelListings() {
   const isLoading = isHotelsLoading || isLocationsLoading;
   const isError = isHotelsError || isLocationsError;
   const error = [hotelsError, locationsError];
-
-  const handleAddLocation = async () => {
-    const toastId = toast.loading("Adding location...");
-    try {
-      await addLocation({ name: "Fiji" }).unwrap();
-      toast.success("Location added successfully");
-      toast.dismiss(toastId);      const allLocations = locations
-        ? [{ _id: 0, name: "All" }, ...locations.filter(loc => loc.name !== "lol")]
-        : [{ _id: 0, name: "All" }];
-    } catch (error) {
-      toast.error("Failed to add location");
-      toast.dismiss(toastId);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -121,13 +92,6 @@ function HotelListings() {
           Discover the most trending hotels worldwide for an unforgettable
           experience.
         </p>
-        <Button
-          disabled={isAddLocationLoading}
-          className={`${isAddLocationLoading ? "opacity-50" : ""}`}
-          onClick={handleAddLocation}
-        >
-          <PlusCircle className="w-4 h-4" /> Add Location
-        </Button>
       </div>
 
       <div className="flex items-center flex-wrap gap-x-4">

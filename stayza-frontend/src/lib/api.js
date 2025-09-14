@@ -75,6 +75,13 @@ export const api = createApi({
         },
       }),
     }),
+    addReview: build.mutation({
+      query: (review) => ({
+        url: "reviews",
+        method: "POST",
+        body: review,
+      }),
+    }),
     getAllLocations: build.query({
       query: () => "locations",
     }),
@@ -88,4 +95,5 @@ export const {
   useGetHotelByIdQuery,
   useAddLocationMutation,
   useGetAllLocationsQuery,
+  useAddReviewMutation,
 } = api;
