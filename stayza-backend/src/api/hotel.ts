@@ -6,24 +6,19 @@ import {
   updateHotel,
   patchHotel,
   deleteHotel,
-} from "../application/hotel.js";
-import isAuthenticated from "./middleware/authentication-middleware.js";
+} from "../application/hotel";
+import isAuthenticated from "./middleware/authentication-middleware";
 
 const hotelsRouter = express.Router();
-
-const preMiddleware = (req, res, next) => {
-  console.log(req.method, req.url);
-  next();
-};
 
 hotelsRouter
   .route("/")
   .get(getAllHotels)
-  .post(createHotel);
+  .post(isAuthenticated, createHotel);
 
 hotelsRouter
   .route("/:_id")
-  .get(isAuthenticated, getHotelById)
+  .get(getHotelById)
   .put(updateHotel)
   .patch(patchHotel)
   .delete(deleteHotel);

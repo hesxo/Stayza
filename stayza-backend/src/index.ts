@@ -20,17 +20,7 @@ app.use(
     origin: "http://localhost:5173",
   })
 );
-const hasClerkKeys = Boolean(process.env.CLERK_PUBLISHABLE_KEY && process.env.CLERK_SECRET_KEY);
-if (hasClerkKeys) {
-  app.use(clerkMiddleware()); // Reads the JWT and sets req.auth
-} else {
-  app.use((req, res, next) => {
-    if (typeof req.auth !== "function") {
-      req.auth = () => ({ isAuthenticated: true, userId: undefined });
-    }
-    next();
-  });
-}
+app.use(clerkMiddleware()); // Reads the JWT from the request and sets the auth object on the request
 
 // app.use((req, res, next) => {
 //   console.log(req.method, req.url);
@@ -40,11 +30,6 @@ if (hasClerkKeys) {
 app.use("/api/hotels", hotelsRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/locations", locationsRouter);
-
-// Catch-all for unmatched routes
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
-});
 
 app.use(globalErrorHandlingMiddleware);
 
