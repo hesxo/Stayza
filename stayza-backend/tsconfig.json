@@ -5,9 +5,13 @@
       "strict": true,
       "lib": ["esnext"],
       "esModuleInterop": true,
-      "skipLibCheck": true
+      "skipLibCheck": true,
+      "allowJs": true,
+      "checkJs": false
     },
+    "include": ["src/**/*"],
+    "exclude": ["dist", "node_modules"],
     "ts-node": {
       "files": true
     }
-  } 
+  }
