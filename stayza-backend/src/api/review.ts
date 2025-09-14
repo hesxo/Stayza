@@ -1,6 +1,6 @@
 import express from "express";
-import { createReview, getReviewsForHotel } from "../application/review.js";
-import isAuthenticated from "./middleware/authentication-middleware.js";
+import { createReview, getReviewsForHotel } from "../application/review";
+import isAuthenticated from "./middleware/authentication-middleware";
 
 const reviewRouter = express.Router();
 
