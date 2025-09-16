@@ -1,5 +1,4 @@
 import express from "express";
-import { Request, Response, NextFunction } from "express";
 
 import {
   getAllHotels,
@@ -13,16 +12,14 @@ import isAuthenticated from "./middleware/authentication-middleware";
 
 const hotelsRouter = express.Router();
 
-const preMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.method, req.url);
-  next();
-};
-
-hotelsRouter.route("/").get(getAllHotels).post(createHotel);
+hotelsRouter
+  .route("/")
+  .get(getAllHotels)
+  .post(isAuthenticated, createHotel);
 
 hotelsRouter
   .route("/:_id")
-  .get(isAuthenticated, getHotelById)
+  .get(getHotelById)
   .put(updateHotel)
   .patch(patchHotel)
   .delete(deleteHotel);
