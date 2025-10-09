@@ -1,17 +1,11 @@
-import { useParams } from "react-router";
-import { hotels } from "../data.js";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Star } from "lucide-react";
-import { Wifi } from "lucide-react";
-import { Building2 } from "lucide-react";
-import { Tv } from "lucide-react";
-import { Coffee } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAddReviewMutation, useGetHotelByIdQuery } from "@/lib/api";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAddReviewMutation, useGetHotelByIdQuery } from "@/lib/api";
 import { useUser } from "@clerk/clerk-react";
+import { Building2, Coffee, MapPin, PlusCircle, Star, Tv, Wifi } from "lucide-react";
+import { useParams } from "react-router";
 
 const HotelDetailsPage = () => {
   const { _id } = useParams();

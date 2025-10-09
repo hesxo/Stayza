@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
+import counterReducer from "./feactures/counterSlice";
 import { api } from "./api";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import counterReducer from './feactures/counterSlice';
 
 export const store = configureStore({
   reducer: {
-    [api.reducerPath]: api.reducer,
     counter: counterReducer,
+    [api.reducerPath]: api.reducer,
   },
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.

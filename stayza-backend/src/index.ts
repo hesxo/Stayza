@@ -20,7 +20,7 @@ app.use(
     origin: "http://localhost:5173",
   })
 );
-app.use(clerkMiddleware({ enableHandshake: false })); // Disable handshake for API endpoints
+app.use(clerkMiddleware()); // Reads the JWT from the request and sets the auth object on the request
 
 // app.use((req, res, next) => {
 //   console.log(req.method, req.url);

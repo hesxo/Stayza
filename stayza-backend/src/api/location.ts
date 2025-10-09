@@ -23,4 +23,4 @@ locationsRouter
   .patch(patchLocation)
   .delete(deleteLocation);
 
-export default locationsRouter;
+export default locationsRouter; 
