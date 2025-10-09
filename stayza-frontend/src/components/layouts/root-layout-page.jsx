@@ -1,4 +1,4 @@
-import Navigation from "../Navigation";
+import Navigation from "../Navigation.jsx";
 import { Outlet } from "react-router";
 import { Toaster } from "@/components/ui/sonner";
 
