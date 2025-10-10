@@ -25,6 +25,10 @@ hotelsRouter
   .post(isAuthenticated, isAdmin, createHotel);
 
 hotelsRouter
+  .route("/ai")
+  .post(respondToAIQuery);
+
+hotelsRouter
   .route("/:_id")
   .get(isAuthenticated, getHotelById)
   .put(updateHotel)
