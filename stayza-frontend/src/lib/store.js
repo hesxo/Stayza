@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import counterReducer from "./feactures/counterSlice";
+import counterReducer from "./features/counterSlice";
+import searchReducer from "./features/searchSlice";
 import { api } from "./api";
 import { setupListeners } from "@reduxjs/toolkit/query";
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
+    search: searchReducer,
     [api.reducerPath]: api.reducer,
   },
   // Adding the api middleware enables caching, invalidation, polling,

@@ -1,41 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-// const getAllHotels = async () => {
-//   try {
-//     const res = await fetch("http://localhost:8000/api/hotels", {
-//       method: "GET",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//     });
-//     if (!res.ok) {
-//       throw new Error("Failed to fetch hotels");
-//     }
-//     const data = await res.json();
-//     return data;
-//   } catch (error) {
-//     throw new Error(error.message);
-//   }
-// };
-
-// const getAllLocations = async () => {
-//   try {
-//     const res = await fetch("http://localhost:8000/api/locations", {
-//       method: "GET",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//     });
-//     if (!res.ok) {
-//       throw new Error("Failed to fetch locations");
-//     }
-//     const data = await res.json();
-//     return data;
-//   } catch (error) {
-//     throw new Error(error.message);
-//   }
-// };
-
 // export { getAllHotels, getAllLocations };
 
 // Define a service using a base URL and expected endpoints
@@ -62,9 +26,15 @@ export const api = createApi({
   endpoints: (build) => ({
     getAllHotels: build.query({
       query: () => "hotels",
+      providesTags: (result, error, id) => [{ type: "Hotels", id: "LIST" }],
+    }),
+    getHotelsBySearch: build.query({
+      query: (search) => `hotels/search?query=${search}`,
+      providesTags: (result, error, id) => [{ type: "Hotels", search }],
     }),
     getHotelById: build.query({
       query: (id) => `hotels/${id}`,
+      providesTags: (result, error, id) => [{ type: "Hotels", id }],
     }),
     createHotel: build.mutation({
       query: (hotel) => ({
@@ -72,6 +42,11 @@ export const api = createApi({
         method: "POST",
         body: hotel,
       }),
+      invalidatesTags: (result, error, id) => [{ type: "Hotels", id: "LIST" }],
+    }),
+    getAllLocations: build.query({
+      query: () => "locations",
+      providesTags: (result, error, id) => [{ type: "Locations", id: "LIST" }],
     }),
     addLocation: build.mutation({
       query: (location) => ({
@@ -81,6 +56,9 @@ export const api = createApi({
           name: location.name,
         },
       }),
+      invalidatesTags: (result, error, id) => [
+        { type: "Locations", id: "LIST" },
+      ],
     }),
     addReview: build.mutation({
       query: (review) => ({
@@ -88,9 +66,9 @@ export const api = createApi({
         method: "POST",
         body: review,
       }),
-    }),
-    getAllLocations: build.query({
-      query: () => "locations",
+      invalidatesTags: (result, error, id) => [
+        { type: "Hotels", id: review.hotelId },
+      ],
     }),
   }),
 });
@@ -100,6 +78,7 @@ export const api = createApi({
 export const {
   useGetAllHotelsQuery,
   useGetHotelByIdQuery,
+  useGetHotelsBySearchQuery,
   useCreateHotelMutation,
   useAddLocationMutation,
   useGetAllLocationsQuery,
