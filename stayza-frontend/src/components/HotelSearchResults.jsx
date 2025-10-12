@@ -1,4 +1,4 @@
-import HotelCard from "@/components/HotelCard";
+import HotelCard from "./Hotelcard";
 import { useGetHotelsBySearchQuery } from "@/lib/api";
 import { Skeleton } from "./ui/skeleton";
 import { useSelector } from "react-redux";
