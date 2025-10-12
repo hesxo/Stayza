@@ -20,7 +20,7 @@ export default function AISearch() {
       <div className="relative flex items-center">
         <div className="relative flex-grow">
           <Input
-            placeholder="Search for the experience you want" // Short placeholder for mobile
+            placeholder="Search for the experience you want" 
             name="query"
             value={value}
             className="bg-[#1a1a1a] text-sm sm:text-base text-white placeholder:text-white/70 placeholder:text-sm sm:placeholder:text-base sm:placeholder:content-['Describe_your_destination...'] border-0 rounded-full py-6 pl-4 pr-12 sm:pr-32 w-full transition-all"
