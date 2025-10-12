@@ -48,7 +48,7 @@ function Navigation() {
   // const count = useSelector((state) => state.counter);
 
   return (
-    <nav className="z-50 bg-black/90 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 text-white py-3 rounded-full mx-4 my-3 relative">
+    <nav className="z-50 bg-sky-200/20 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 text-white py-3 rounded-full mx-4 my-3 relative border border-white/10 shadow-sm">
       <div className="flex items-center space-x-8">
         <Link to="/" className="text-xl font-bold">
           Horizone

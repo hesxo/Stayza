@@ -30,7 +30,7 @@ export default function AISearch() {
 
         <Button
           type="button"
-          className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-x-2 text-white rounded-full px-4 py-2 shadow-lg transition-transform hover:scale-105 bg-blue-600/30 backdrop-blur-md border border-white/20"
+          className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-x-2 text-white rounded-full px-4 py-2 shadow-lg transition-transform hover:scale-105 bg-sky-400/30 backdrop-blur-md border border-white/10"
           onClick={handleSearch}
         >
           <Sparkles className="w-4 h-4" />

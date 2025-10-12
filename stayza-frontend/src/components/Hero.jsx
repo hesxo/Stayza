@@ -106,8 +106,8 @@ export default function Hero() {
             </div>
 
             <button
-                type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-x-2 text-white rounded-full px-5 py-2 shadow-lg transition-transform hover:scale-105 bg-blue-600/30 backdrop-blur-md border border-white/20"
+              type="submit"
+              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-x-2 text-white rounded-full px-5 py-2 shadow-lg transition-transform hover:scale-105 bg-sky-400/30 backdrop-blur-md border border-white/10"
             >
               <Sparkles className="w-4 h-4 fill-white" />
               <span className="text-sm">AI Search</span>
