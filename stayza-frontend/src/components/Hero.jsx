@@ -1,138 +1,215 @@
-import { useState, useEffect, useCallback } from "react";
-import AISearch from "./AISearch";
+import React, { useState, useEffect, forwardRef } from "react";
+import { useDispatch } from "react-redux";
+import { setQuery } from "@/lib/features/searchSlice";
 import { Input } from "@/components/ui/input";
-import { Plus, Sparkles } from "lucide-react";
-// import { useDispatch } from "react-redux";
-// import { submit } from "@/lib/features/searchSlice";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Sparkles } from "lucide-react";
+import CountUp from "react-countup";
 
-const heroImages = [
-  "https://i.postimg.cc/3Jvz1RhZ/Heritance-Kandalama.jpg",
-  "https://i.postimg.cc/VkTxWCr4/grand-hotel-graden-1920x1000-1.jpg",
-  "https://i.postimg.cc/Jz4r2ZhL/588945741.jpg",
-  "https://i.postimg.cc/nLXHHx7S/67d3c92725330.jpg",
-  "https://i.postimg.cc/Y2YCGtPJ/Cinnamon-Bentota-Beach-header.jpg",
-  "https://i.postimg.cc/sDMK90Yd/R-P-B-H-hd-1400x715-1.webp",
-  "https://i.postimg.cc/c4z9pNxL/490937419.jpg",
-  "https://i.postimg.cc/7h9v3t0T/6526649-halcyon-mawella-kotuwaththawewatta-sri-lanka.webp",
+// Images to show inside the card (user-facing picture switcher)
+const cardImages = [
+	"https://i.postimg.cc/3Jvz1RhZ/Heritance-Kandalama.jpg",
+	"https://i.postimg.cc/VkTxWCr4/grand-hotel-graden-1920x1000-1.jpg",
+	"https://i.postimg.cc/Jz4r2ZhL/588945741.jpg",
+	"https://i.postimg.cc/nLXHHx7S/67d3c92725330.jpg",
 ];
 
-export default function Hero() {
-  //   const dispatch = useDispatch();
+export const Hero = forwardRef(
+	(
+		{ scrollToHotelList, statistics, isStatisticsLoading, isStatisticsError },
+		ref
+	) => {
+		const [destination, setDestination] = useState("");
+		const dispatch = useDispatch();
 
-  // Logic for animating slides
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+	// Card image switcher state
+	const [currentIndex, setCurrentIndex] = useState(0);
+	const prevImage = () => setCurrentIndex((i) => (i - 1 + cardImages.length) % cardImages.length);
+	const nextImage = () => setCurrentIndex((i) => (i + 1) % cardImages.length);
 
-  const goToSlide = useCallback(
-    (index) => {
-      if (index === currentSlide || isTransitioning) return;
-      setIsTransitioning(true);
-      setCurrentSlide(index);
-    },
-    [currentSlide, isTransitioning]
-  );
+	// Auto-advance images every 3 seconds
+	useEffect(() => {
+		const id = setInterval(() => {
+			setCurrentIndex((i) => (i + 1) % cardImages.length);
+		}, 3000);
+		return () => clearInterval(id);
+	}, []);
 
-  useEffect(() => {
-    let transitionTimeout;
-    if (isTransitioning) {
-      transitionTimeout = setTimeout(() => setIsTransitioning(false), 500);
-    }
-    return () => clearTimeout(transitionTimeout);
-  }, [isTransitioning]);
+		const stats = statistics ?? { hotelsCount: 0, usersCount: 0, appRating: 0 };
 
-  useEffect(() => {
-    let intervalId;
-    if (!isTransitioning) {
-      intervalId = setInterval(() => {
-        const nextSlide = (currentSlide + 1) % heroImages.length;
-        goToSlide(nextSlide);
-      }, 3000);
-    }
-    return () => clearInterval(intervalId);
-  }, [currentSlide, isTransitioning, goToSlide]);
+		const handleSubmit = (e) => {
+			e.preventDefault();
+			const searchValue = e.target.search?.value?.trim();
+			if (searchValue) dispatch(setQuery(searchValue));
+			if (typeof scrollToHotelList === "function") scrollToHotelList();
+		};
 
-  //   const handleSearch = useCallback(
-  //     (e) => {
-  //       e.preventDefault();
-  //       const searchQuery = e.target.search.value.trim();
-  //       if (!searchQuery) return;
+		if (isStatisticsLoading) {
+			return (
+				<div className="flex justify-center items-center min-h-screen">
+					<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+				</div>
+			);
+		}
 
-  //       try {
-  //         dispatch(submit(searchQuery));
-  //       } catch (error) {
-  //         console.error("Search failed:", error);
-  //       }
-  //     },
-  //     [dispatch]
-  //   );
+		if (isStatisticsError) {
+			return (
+				<div className="container mx-auto px-4 py-12">
+					<div className="flex flex-col lg:flex-row gap-8 items-center" ref={ref}>
+						<div className="w-full lg:w-1/2 space-y-6">
+							<h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+								Find Your Perfect <br />
+								<span className="text-black">Luxury Staycation</span>
+							</h1>
+							<p className="text-lg text-gray-600 max-w-md">
+								Discover handpicked luxury accommodations for unforgettable
+								experiences, all in one place.
+							</p>
 
-  return (
-    <div className="relative h-[500px] md:h-[600px] py-3 mx-4 overflow-hidden rounded-3xl bg-black z-0">
-      {/* Background Images */}
-      {heroImages.map((image, index) => (
-        <div
-          key={index}
-          className={cn(
-            "absolute inset-0 bg-cover bg-center transition-opacity duration-500",
-            currentSlide === index ? "opacity-100" : "opacity-0"
-          )}
-          style={{ backgroundImage: `url(${image})` }}
-        >
-          <div className="absolute inset-0 bg-black/40"></div>
-        </div>
-      ))}
+							<form
+								onSubmit={handleSubmit}
+								className="flex items-center bg-white shadow-md rounded-full overflow-hidden w-full max-w-xl h-14 border border-gray-200"
+							>
+								<Input
+									name="search"
+									value={destination}
+									onChange={(e) => setDestination(e.target.value)}
+									placeholder="Describe the experience you are looking for"
+									className="flex-grow px-4 py-3 border-none ring-0 focus-visible:ring-0 focus:outline-none h-full"
+								/>
+								<Button
+									type="submit"
+									variant="default"
+									className="rounded-full px-6 h-12 flex mr-1 items-center gap-2 bg-black text-white hover:bg-gray-800 transition-colors"
+								>
+									<Sparkles className="animate-pulse text-sky-400" />
+									AI Search
+								</Button>
+							</form>
+							<div className="text-sm text-gray-500 italic">
+								Try: Hotels with rooftop views in Sydney, Australia
+							</div>
+							<div className="flex items-center space-x-6 pt-4">
+								<p className="text-sm text-gray-500 italic">
+									Statistics are currently unavailable
+								</p>
+							</div>
+						</div>
 
-      {/* Hero Content */}
-      <div className="relative z-10 flex flex-col items-center text-white justify-center h-full px-4 sm:px-8">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4 text-center">
-          Find Your Best Staycation
-        </h1>
-        <p className="text-base md:text-lg mb-8 text-center max-w-2xl">
-          Describe your dream destination and experience, and we'll find the
-          perfect place for you.
-        </p>
+						<div className="w-full lg:w-1/2">
+							<div className="rounded-3xl overflow-hidden shadow-2xl bg-white border border-gray-100 h-[500px] relative flex items-center justify-center">
+								<img
+									src={cardImages[currentIndex]}
+									alt={`Slide ${currentIndex + 1}`}
+									className="w-full h-[500px] object-cover"
+								/>
+								{/* Manual prev/next removed — auto-advance + dots remain */}
+								<div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2">
+									{cardImages.map((_, idx) => (
+										<button
+											key={idx}
+											onClick={() => setCurrentIndex(idx)}
+											className={`h-2 w-8 rounded-full ${currentIndex === idx ? "bg-black" : "bg-gray-300"}`}
+											aria-label={`Go to slide ${idx + 1}`}
+										/>
+									))}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			);
+		}
 
-        {/* Search Form */}
-        {/* <form onSubmit={handleSearch} className="w-full max-w-md">
-          <div className="relative flex items-center">
-            <div className="relative flex-grow">
-              <Input
-                type="text"
-                name="search"
-                placeholder="Search..." // Short placeholder for mobile
-                className="bg-[#1a1a1a] text-sm sm:text-base text-white placeholder:text-white/70 placeholder:text-sm sm:placeholder:text-base sm:placeholder:content-['Describe_your_destination...'] border-0 rounded-full py-6 pl-4 pr-12 sm:pr-32 w-full transition-all"
-              />
-            </div>
+		return (
+			<div className="relative">
+				{/* Background Slides */}
+					<div className="absolute inset-0 -z-10 bg-white" />
 
-            <button
-              type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-x-2 text-white rounded-full px-5 py-2 shadow-lg transition-transform hover:scale-105 bg-sky-400/30 backdrop-blur-md border border-white/10"
-            >
-              <Sparkles className="w-4 h-4 fill-white" />
-              <span className="text-sm">AI Search</span>
-            </button>
-          </div>
-        </form> */}
-        <AISearch />
+				<div className="container mx-auto px-4 py-12">
+					<div className="flex flex-col lg:flex-row gap-8 items-center" ref={ref}>
+						<div className="w-full lg:w-1/2 space-y-6">
+							<h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+								Find Your Perfect <br />
+								<span className="text-black">Luxury Staycation</span>
+							</h1>
+							<p className="text-lg text-gray-600 max-w-md">
+								Discover handpicked luxury accommodations for unforgettable
+								experiences, all in one place.
+							</p>
 
-        {/* Pagination dots */}
-        <div className="absolute bottom-6 flex space-x-3">
-          {heroImages.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={cn(
-                "h-3 transition-all rounded-full",
-                currentSlide === index
-                  ? "bg-white w-8"
-                  : "bg-white/50 w-3 hover:bg-white/70"
-              )}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+							<form
+								onSubmit={handleSubmit}
+								className="flex items-center bg-white shadow-md rounded-full overflow-hidden w-full max-w-xl h-14 border border-gray-200"
+							>
+								<Input
+									name="search"
+									value={destination}
+									onChange={(e) => setDestination(e.target.value)}
+									placeholder="Describe the experience you are looking for"
+									className="flex-grow px-4 py-3 border-none ring-0 focus-visible:ring-0 focus:outline-none h-full"
+								/>
+								<Button
+									type="submit"
+									variant="default"
+									className="rounded-full px-6 h-12 flex mr-1 items-center gap-2 bg-black text-white hover:bg-gray-800 transition-colors"
+								>
+									<Sparkles className="animate-pulse text-sky-400" />
+									AI Search
+								</Button>
+							</form>
+							<div className="text-sm text-gray-500 italic">
+								Try: Hotels with rooftop views in Sydney, Australia
+							</div>
+							{/* Statistics */}
+							<div className="flex items-center space-x-6 pt-4">
+								<div>
+									<p className="text-2xl font-bold">
+										<CountUp end={stats.hotelsCount} duration={0.5} />+
+									</p>
+									<p className="text-gray-500">Luxury Hotels</p>
+								</div>
+								<div>
+									<p className="text-2xl font-bold">
+										<CountUp end={stats.usersCount} duration={0.5} />+
+									</p>
+									<p className="text-gray-500">Happy Guests</p>
+								</div>
+								<div>
+									<p className="text-2xl font-bold">
+										<CountUp end={stats.appRating} decimals={1} duration={0.5} />
+										+
+									</p>
+									<p className="text-gray-500">Customer Rating</p>
+								</div>
+							</div>
+						</div>
+
+						<div className="w-full lg:w-1/2">
+							<div className="rounded-3xl overflow-hidden shadow-2xl bg-white border border-gray-100 h-[500px] relative flex items-center justify-center">
+								<img
+									src={cardImages[currentIndex]}
+									alt={`Slide ${currentIndex + 1}`}
+									className="w-full h-[500px] object-cover"
+								/>
+								{/* Manual prev/next removed — auto-advance + dots remain */}
+								<div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-2">
+									{cardImages.map((_, idx) => (
+										<button
+											key={idx}
+											onClick={() => setCurrentIndex(idx)}
+											className={`h-2 w-8 rounded-full ${currentIndex === idx ? "bg-black" : "bg-gray-300"}`}
+											aria-label={`Go to slide ${idx + 1}`}
+										/>
+									))}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
+);
+
+export default Hero;

@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/clerk-react";
 import { Globe, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router";
 
 function Navigation() {
-  //   const { user } = useUser();
+  const { user } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  //   const menuRef = useRef(null);
-    // const buttonRef = useRef(null);
+  const menuRef = useRef(null);
+  // const buttonRef = useRef(null);
 
   // Close menu when clicking outside
   //   useEffect(() => {
@@ -48,7 +48,7 @@ function Navigation() {
   // const count = useSelector((state) => state.counter);
 
   return (
-    <nav className="z-50 bg-sky-200/20 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 text-white py-3 rounded-full mx-4 my-3 relative border border-white/10 shadow-sm">
+  <nav className="z-50 bg-black backdrop-blur-md flex items-center justify-between px-4 sm:px-6 text-white py-3 rounded-full mx-4 my-3 relative border border-white/10 shadow-sm">
       <div className="flex items-center space-x-8">
         <Link to="/" className="text-xl font-bold">
           Horizone
