@@ -17,7 +17,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://stayza-rho.vercel.app/",
+    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
   })
 );
 app.use(clerkMiddleware()); // Reads the JWT from the request and sets the auth object on the request
