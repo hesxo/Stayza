@@ -1,12 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-// export { getAllHotels, getAllLocations };
+// In browser builds (Vite) `process` is not defined. Don't import or call dotenv here.
+// Use Vite environment variables exposed via `import.meta.env`. Define VITE_BACKEND_URL
+// in a `.env` file at project root (not checked into the client bundle) if needed.
 
 // Define a service using a base URL and expected endpoints
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.BACKEND_URL || "http://localhost:8000/api/",
+    // Use Vite's import.meta.env for client-side environment variables.
+    baseUrl: import.meta.env.VITE_BACKEND_URL || "http://localhost:8000/api/",
     prepareHeaders: async (headers) => {
       return new Promise((resolve) => {
         async function checkToken() {

@@ -228,8 +228,8 @@ export default function HotelCreateFrom() {
           </form>
         </Form>
 
-        {/* Devtools - keep available only during development */}
-        {process.env.NODE_ENV === "development" && <DevTool control={form.control} />}
+  {/* Devtools - keep available only during development */}
+  {import.meta.env.DEV && <DevTool control={form.control} />}
       </Card>
     </div>
   );
