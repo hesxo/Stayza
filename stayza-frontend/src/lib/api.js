@@ -30,7 +30,7 @@ export const api = createApi({
     }),
     getHotelsBySearch: build.query({
       query: (search) => `hotels/search?query=${search}`,
-      providesTags: (result, error, search) => [{ type: "Hotels", id: `SEARCH-${search}` }],
+      providesTags: (result, error, id) => [{ type: "Hotels", search }],
     }),
     getHotelById: build.query({
       query: (id) => `hotels/${id}`,
