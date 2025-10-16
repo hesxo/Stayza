@@ -1,4 +1,4 @@
-import HotelCard from "./Hotelcard";
+import HotelCard from "@/components/HotelCard";
 import { useGetAllHotelsQuery, useGetAllLocationsQuery } from "@/lib/api";
 import { useState } from "react";
 import { toast } from "sonner";
