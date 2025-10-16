@@ -1,42 +1,159 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useCreateHotelMutation } from "@/lib/api";
+import { Textarea } from "./ui/textarea";
 
-import { Sparkles } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { useState } from "react";
-import { setQuery } from "@/lib/features/searchSlice";
+import { DevTool } from "@hookform/devtools";
 
-export default function AISearch() {
-  const dispatch = useDispatch();
+const formSchema = z.object({
+  name: z.string().min(1, {
+    message: "Name is required",
+  }),
+  description: z.string().min(1, {
+    message: "Description is required",
+  }),
+  image: z.string().min(1, {
+    message: "Image is required",
+  }),
+  location: z.string().min(1, {
+    message: "Location is required",
+  }),
+  price: z.number().nonnegative({
+    message: "Price is required",
+  }),
+});
 
-  const [value, setValue] = useState("");
+export default function HotelCreateFrom() {
+  // 1. Define your form.
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      image: "",
+      location: "",
+      price: 0,
+    },
+  });
 
-  function handleSearch() {
-    dispatch(setQuery(value));
+  const [createHotel, { isLoading }] = useCreateHotelMutation();
+
+  // 2. Define a submit handler.
+  async function onSubmit(values) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    try {
+      await createHotel(values).unwrap();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
-    <div className="z-10 w-full max-w-lg">
-      <div className="relative flex items-center">
-        <div className="relative flex-grow">
-          <Input
-            placeholder="Search for the experience you want" // Short placeholder for mobile
-            name="query"
-            value={value}
-            className="bg-[#1a1a1a] text-sm sm:text-base text-white placeholder:text-white/70 placeholder:text-sm sm:placeholder:text-base sm:placeholder:content-['Describe_your_destination...'] border-0 rounded-full py-6 pl-4 pr-12 sm:pr-32 w-full transition-all"
-            onChange={(e) => setValue(e.target.value)}
-          />
-        </div>
-
-        <Button
-          type="button"
-          className="absolute right-2 h-[80%] my-auto bg-black text-white rounded-full px-2 sm:px-4 flex items-center gap-x-2 border-white border-2 hover:bg-black/80 transition-colors"
-          onClick={handleSearch}
-        >
-          <Sparkles className="w-4 h-4 fill-white" />
-          <span className="text-sm">AI Search</span>
-        </Button>
-      </div>
-    </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mt-4 w-1/4 flex flex-col gap-4"
+      >
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Hotel Name" {...field} />
+              </FormControl>
+              <FormDescription>This is the name of the hotel.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Hotel description" {...field} />
+              </FormControl>
+              <FormDescription>
+                A short description of the hotel.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="image"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Image</FormLabel>
+              <FormControl>
+                <Input placeholder="Image URL" {...field} />
+              </FormControl>
+              <FormDescription>URL to an image of the hotel.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Location</FormLabel>
+              <FormControl>
+                <Input placeholder="City, Country" {...field} />
+              </FormControl>
+              <FormDescription>Where is the hotel located?</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="price"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Price</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="100"
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    if (isNaN(val)) {
+                      field.onChange(0);
+                    } else {
+                      field.onChange(val);
+                    }
+                  }}
+                />
+              </FormControl>
+              <FormDescription>Price per night in USD.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Create Hotel</Button>
+        <DevTool control={form.control} />
+      </form>
+    </Form>
   );
 }
