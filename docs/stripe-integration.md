@@ -58,7 +58,7 @@ Copy the provided `.env.example` files into `.env` and fill in the secrets:
 ## 3. Product Catalog Automation
 
 - When admins create hotels, the backend creates a Stripe product with a default price representing the nightly rate (`src/application/hotel.ts`, `createHotel`).  
-- Existing hotels can be backfilled through the seed script (`src/seed.ts`) or via the `POST /api/hotels/:id/stripe/price` endpoint which regenerates a price and stores `stripePriceId` on the hotel document.  
+- Existing hotels can be backfilled through the seed script (`src/seed.ts`), via the `POST /api/hotels/:id/stripe/price` endpoint, or automatically during checkout (the payment service provisions a product/price if a hotel is missing one).  
 - `Hotel` documents store `stripePriceId` so that clients never send arbitrary prices.
 
 ## 4. Checkout Session Creation

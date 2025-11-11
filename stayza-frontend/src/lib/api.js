@@ -23,6 +23,7 @@ export const api = createApi({
       });
     },
   }),
+  tagTypes: ["Hotels", "Locations", "Reviews"],
   endpoints: (build) => ({
     getAllHotels: build.query({
       query: () => "hotels",
@@ -88,6 +89,13 @@ export const api = createApi({
       }),
       invalidatesTags: (result, error, review) => [
         { type: "Hotels", id: review.hotelId },
+        { type: "Reviews", id: review.hotelId },
+      ],
+    }),
+    getReviewsByHotel: build.query({
+      query: (hotelId) => `reviews/hotel/${hotelId}`,
+      providesTags: (result, error, hotelId) => [
+        { type: "Reviews", id: hotelId },
       ],
     }),
   }),
@@ -107,4 +115,5 @@ export const {
   useAddLocationMutation,
   useGetAllLocationsQuery,
   useAddReviewMutation,
+  useGetReviewsByHotelQuery,
 } = api;
