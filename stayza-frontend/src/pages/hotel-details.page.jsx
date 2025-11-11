@@ -15,11 +15,12 @@ import { Link, useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { SignedIn, SignedOut } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, useUser } from "@clerk/clerk-react";
 import StarRating from "@/components/StarRating";
 
 const HotelDetailsPage = () => {
   const { _id } = useParams();
+  const { user } = useUser();
   const { data: hotel, isLoading, isError, error } = useGetHotelByIdQuery(_id);
   const {
     data: reviews = [],
@@ -51,7 +52,11 @@ const HotelDetailsPage = () => {
     });
   };
 
-  const getReviewerLabel = (userId) => {
+  const getReviewerLabel = (review) => {
+    if (review?.authorName) {
+      return review.authorName;
+    }
+    const userId = review?.userId;
     if (!userId) {
       return "Guest";
     }
@@ -74,6 +79,12 @@ const HotelDetailsPage = () => {
         hotelId: _id,
         comment: trimmedComment,
         rating: Number(reviewForm.rating),
+        authorName:
+          user?.fullName ||
+          user?.username ||
+          user?.firstName ||
+          user?.primaryEmailAddress?.emailAddress ||
+          "Guest",
       }).unwrap();
       toast.success("Thanks for sharing your experience!");
       setReviewForm({ rating: 5, comment: "" });
@@ -277,7 +288,7 @@ const HotelDetailsPage = () => {
                 <div key={review._id} className="rounded-xl border p-5 shadow-sm bg-card">
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
                     <span className="font-medium text-foreground">
-                      {getReviewerLabel(review.userId)}
+                      {getReviewerLabel(review)}
                     </span>
                     <span>{formatReviewDate(review.createdAt)}</span>
                   </div>

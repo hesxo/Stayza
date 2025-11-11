@@ -7,6 +7,7 @@ import NotFoundError from "../domain/errors/not-found-error";
 import Hotel from "../infrastructure/entities/Hotel";
 import { getAuth } from "@clerk/express";
 import UnauthorizedError from "../domain/errors/unauthorized-error";
+import { z } from "zod";
 
 const MAX_ROOM_NUMBER = 999;
 const MIN_ROOM_NUMBER = 100;
@@ -122,6 +123,170 @@ export const getBookingById = async (
     }
     res.status(200).json(booking);
     return;
+  } catch (error) {
+    next(error);
+  }
+};
+
+const BookingFiltersSchema = z.object({
+  status: z.enum(["PENDING", "PAID", "FAILED"]).optional(),
+  startDate: z.coerce.date().optional(),
+  endDate: z.coerce.date().optional(),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(50).default(10),
+});
+
+const toCurrencyAmount = (value: number) =>
+  Number.isFinite(value) ? Number(value.toFixed(2)) : 0;
+
+export const getBookingsForUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const requestedUserId = req.params.userId;
+    const auth = getAuth(req);
+    const authUserId = auth.userId;
+    const isAdmin = auth?.sessionClaims?.metadata?.role === "admin";
+
+    if (!authUserId || (!isAdmin && authUserId !== requestedUserId)) {
+      throw new UnauthorizedError("Unauthorized");
+    }
+
+    const parsedFilters = BookingFiltersSchema.safeParse(req.query);
+    if (!parsedFilters.success) {
+      throw new ValidationError(parsedFilters.error.message);
+    }
+
+    const { status, startDate, endDate, page, limit } = parsedFilters.data;
+
+    const baseFilter: Record<string, unknown> = {
+      userId: requestedUserId,
+    };
+
+    const filter: Record<string, unknown> = { ...baseFilter };
+
+    if (status) {
+      filter.paymentStatus = status;
+    }
+
+    if (startDate || endDate) {
+      const dateFilter: Record<string, Date> = {};
+      if (startDate) {
+        dateFilter.$gte = startDate;
+      }
+      if (endDate) {
+        dateFilter.$lte = endDate;
+      }
+      filter.checkIn = dateFilter;
+    }
+
+    const skip = (page - 1) * limit;
+
+    const bookingsPromise = Booking.find(filter)
+      .populate("hotelId", "name location image price rating")
+      .sort({ checkIn: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const filteredCountPromise = Booking.countDocuments(filter);
+
+    const aggregateSummaryPromise = Booking.aggregate([
+      { $match: baseFilter },
+      {
+        $group: {
+          _id: "$paymentStatus",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const upcomingTripsPromise = Booking.countDocuments({
+      ...baseFilter,
+      checkIn: { $gte: new Date() },
+    });
+
+    const [bookings, filteredCount, summaryCounts, upcomingTrips] =
+      await Promise.all([
+        bookingsPromise,
+        filteredCountPromise,
+        aggregateSummaryPromise,
+        upcomingTripsPromise,
+      ]);
+
+    const formattedBookings = bookings.map((booking) => {
+      const hotel = booking.hotelId as unknown as {
+        _id: string;
+        name: string;
+        location: string;
+        image: string;
+        price: number;
+        rating?: number;
+      };
+
+      const checkInDate = new Date(booking.checkIn);
+      const checkOutDate = new Date(booking.checkOut);
+      const nights = Math.max(
+        1,
+        Math.ceil(
+          (checkOutDate.getTime() - checkInDate.getTime()) /
+            (1000 * 60 * 60 * 24)
+        )
+      );
+      const nightlyRate = typeof hotel?.price === "number" ? hotel.price : 0;
+
+      return {
+        _id: booking._id,
+        hotel: hotel
+          ? {
+              _id: hotel._id,
+              name: hotel.name,
+              location: hotel.location,
+              image: hotel.image,
+              price: hotel.price,
+              rating: hotel.rating,
+            }
+          : null,
+        checkIn: booking.checkIn,
+        checkOut: booking.checkOut,
+        roomNumber: booking.roomNumber,
+        paymentStatus: booking.paymentStatus,
+        totalAmount: toCurrencyAmount(nightlyRate * nights),
+        bookingDate: booking.createdAt ?? booking.checkIn,
+      };
+    });
+
+    const paymentSummary = summaryCounts.reduce<Record<string, number>>(
+      (acc, current) => {
+        acc[current._id as string] = current.count;
+        return acc;
+      },
+      {}
+    );
+
+    const totalBookings =
+      (paymentSummary.PENDING || 0) +
+      (paymentSummary.PAID || 0) +
+      (paymentSummary.FAILED || 0);
+
+    res.status(200).json({
+      data: formattedBookings,
+      pagination: {
+        total: filteredCount,
+        page,
+        limit,
+        totalPages: Math.max(1, Math.ceil(filteredCount / limit)),
+      },
+      stats: {
+        totalBookings,
+        pendingPayments: paymentSummary.PENDING || 0,
+        paidBookings: paymentSummary.PAID || 0,
+        failedPayments: paymentSummary.FAILED || 0,
+        upcomingTrips,
+      },
+    });
   } catch (error) {
     next(error);
   }

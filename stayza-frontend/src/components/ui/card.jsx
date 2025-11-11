@@ -2,18 +2,16 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Card({
-  className,
-  ...props
-}) {
+function Card({ className, ...props }) {
   return (
-    (<div
+    <div
       data-slot="card"
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+        "bg-card text-card-foreground flex flex-col gap-6 rounded-[1.5rem] border border-border/60 p-6 shadow-[0_25px_60px_rgba(15,23,42,0.08)] transition-transform duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_35px_80px_rgba(15,23,42,0.12)]",
         className
       )}
-      {...props} />)
+      {...props}
+    />
   );
 }
 
@@ -71,11 +69,14 @@ function CardAction({
   );
 }
 
-function CardContent({
-  className,
-  ...props
-}) {
-  return (<div data-slot="card-content" className={cn("px-6", className)} {...props} />);
+function CardContent({ className, ...props }) {
+  return (
+    <div
+      data-slot="card-content"
+      className={cn("px-6 text-base leading-relaxed text-muted-foreground", className)}
+      {...props}
+    />
+  );
 }
 
 function CardFooter({

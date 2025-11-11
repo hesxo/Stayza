@@ -17,6 +17,11 @@ const reviewSchema = new mongoose.Schema(
       type: String, //! clerk userIds are passed
       required: true,
     },
+    authorName: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     hotelId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Hotel",

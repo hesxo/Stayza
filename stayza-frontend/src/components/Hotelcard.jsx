@@ -61,7 +61,12 @@ function HotelCard({ hotel }) {
         </div>
       </div>
       <div className="mt-4 flex gap-2">
-        <Button variant="secondary" className="flex-1" asChild size="sm">
+        <Button
+          variant="secondary"
+          className="flex-1 !text-black !shadow-none hover:!shadow-none"
+          asChild
+          size="sm"
+        >
           <Link to={`/hotels/${hotel._id}`}>View Details</Link>
         </Button>
         <BookingDialog

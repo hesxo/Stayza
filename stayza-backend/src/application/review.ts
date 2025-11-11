@@ -16,6 +16,10 @@ const createReview = async (
     const comment =
       typeof reviewData.comment === "string" ? reviewData.comment.trim() : "";
     const hotelId = reviewData.hotelId;
+    const authorNameInput =
+      typeof reviewData.authorName === "string"
+        ? reviewData.authorName.trim()
+        : "";
 
     if (!rating || rating < 1 || rating > 5 || !comment || !hotelId) {
       throw new ValidationError("Rating, comment, and hotelId are required");
@@ -33,6 +37,7 @@ const createReview = async (
       comment,
       userId: userId,
       hotelId,
+      authorName: authorNameInput || userId || "Guest",
     });
 
     const existingReviewCount = hotel.reviews.length;
@@ -63,7 +68,7 @@ const getReviewsForHotel = async (
 
     const reviews = await Review.find({ hotelId })
       .sort({ createdAt: -1 })
-      .select("rating comment userId createdAt updatedAt")
+      .select("rating comment userId authorName createdAt updatedAt")
       .lean();
 
     res.status(200).json(reviews);

@@ -23,7 +23,7 @@ export const api = createApi({
       });
     },
   }),
-  tagTypes: ["Hotels", "Locations", "Reviews"],
+  tagTypes: ["Hotels", "Locations", "Reviews", "Bookings"],
   endpoints: (build) => ({
     getAllHotels: build.query({
       query: () => "hotels",
@@ -51,6 +51,7 @@ export const api = createApi({
         method: "POST",
         body: booking,
       }),
+      invalidatesTags: [{ type: "Bookings", id: "LIST" }],
     }),
     getBookingById: build.query({
       query: (bookingId) => `bookings/${bookingId}`,
@@ -98,6 +99,29 @@ export const api = createApi({
         { type: "Reviews", id: hotelId },
       ],
     }),
+    getBookingsByUser: build.query({
+      query: ({ userId, status, startDate, endDate, page = 1, limit = 10 }) => {
+        const params = new URLSearchParams();
+        if (status) {
+          params.set("status", status);
+        }
+        if (startDate) {
+          params.set("startDate", startDate);
+        }
+        if (endDate) {
+          params.set("endDate", endDate);
+        }
+        params.set("page", String(page));
+        params.set("limit", String(limit));
+        const queryString = params.toString();
+        return `bookings/user/${userId}${
+          queryString ? `?${queryString}` : ""
+        }`;
+      },
+      providesTags: (result, error, args) => [
+        { type: "Bookings", id: args?.userId || "LIST" },
+      ],
+    }),
   }),
 });
 
@@ -116,4 +140,5 @@ export const {
   useGetAllLocationsQuery,
   useAddReviewMutation,
   useGetReviewsByHotelQuery,
+  useGetBookingsByUserQuery,
 } = api;
