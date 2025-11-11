@@ -8,6 +8,37 @@ import Hotel from "../infrastructure/entities/Hotel";
 import { getAuth } from "@clerk/express";
 import UnauthorizedError from "../domain/errors/unauthorized-error";
 
+const MAX_ROOM_NUMBER = 999;
+const MIN_ROOM_NUMBER = 100;
+const ROOM_ASSIGNMENT_ATTEMPTS = 200;
+
+const generateUniqueRoomNumber = async (
+  hotelId: string,
+  checkIn: Date,
+  checkOut: Date
+) => {
+  for (let attempt = 0; attempt < ROOM_ASSIGNMENT_ATTEMPTS; attempt++) {
+    const roomNumber =
+      Math.floor(Math.random() * (MAX_ROOM_NUMBER - MIN_ROOM_NUMBER + 1)) +
+      MIN_ROOM_NUMBER;
+
+    const overlappingBookingExists = await Booking.exists({
+      hotelId,
+      roomNumber,
+      checkIn: { $lt: checkOut },
+      checkOut: { $gt: checkIn },
+    });
+
+    if (!overlappingBookingExists) {
+      return roomNumber;
+    }
+  }
+
+  throw new ValidationError(
+    "Unable to assign a room number for the selected dates. Please try different dates."
+  );
+};
+
 export const createBooking = async (
   req: Request,
   res: Response,
@@ -19,40 +50,27 @@ export const createBooking = async (
       throw new ValidationError(booking.error.message);
     }
 
+    const { hotelId, checkIn, checkOut } = booking.data;
+
     const { userId } = getAuth(req);
     if (!userId) {
       throw new UnauthorizedError("Unauthorized");
     }
 
-    const hotel = await Hotel.findById(booking.data.hotelId);
+    const hotel = await Hotel.findById(hotelId);
     if (!hotel) {
       throw new NotFoundError("Hotel not found");
     }
 
+    const roomNumber = await generateUniqueRoomNumber(hotelId, checkIn, checkOut);
+
     const newBooking = await Booking.create({
-      hotelId: booking.data.hotelId,
-      userId: userId,
-      checkIn: booking.data.checkIn,
-      checkOut: booking.data.checkOut,
-      roomNumber: await (async () => {
-        let roomNumber: number | undefined = undefined;
-        let isRoomAvailable = false;
-        while (!isRoomAvailable) {
-          roomNumber = Math.floor(Math.random() * 1000) + 1;
-          const existingBooking = await Booking.findOne({
-            hotelId: booking.data.hotelId,
-            roomNumber: roomNumber,
-            $or: [
-              {
-                checkIn: { $lte: booking.data.checkOut },
-                checkOut: { $gte: booking.data.checkIn },
-              },
-            ],
-          });
-          isRoomAvailable = !existingBooking;
-        }
-        return roomNumber;
-      })(),
+      hotelId,
+      userId,
+      checkIn,
+      checkOut,
+      roomNumber,
+      paymentStatus: "PENDING",
     });
 
     res.status(201).json(newBooking);

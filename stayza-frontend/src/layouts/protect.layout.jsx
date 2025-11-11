@@ -3,7 +3,7 @@ import { useUser } from "@clerk/clerk-react";
 import { Navigate } from "react-router";
 
 const ProtectLayout = () => {
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
 
   if (!isLoaded) {
     return null;

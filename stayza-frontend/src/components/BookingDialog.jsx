@@ -1,22 +1,40 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import BookingForm from "./BookingForm";
 import { useState } from "react";
 
-export function BookingDialog({ hotelName, hotelId, onSubmit, isLoading }) {
+export function BookingDialog({
+  hotelName,
+  hotelId,
+  onSubmit,
+  isLoading,
+  triggerLabel = "Book Now",
+  triggerProps = {},
+}) {
   const [open, setOpen] = useState(false);
 
   const handleBookingSubmit = async (bookingData) => {
-    await onSubmit(bookingData);
-    if (!isLoading) {
+    try {
+      await onSubmit(bookingData);
       setTimeout(() => setOpen(false), 300);
+    } catch {
+      // Keep dialog open so the user can correct their details
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="lg">Book Now</Button>
+        <Button size="lg" {...triggerProps}>
+          {triggerLabel}
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -34,5 +52,3 @@ export function BookingDialog({ hotelName, hotelId, onSubmit, isLoading }) {
     </Dialog>
   );
 }
-
-

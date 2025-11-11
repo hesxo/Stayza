@@ -10,6 +10,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import DateRangePicker from "./DateRangePicker";
+import { addDays } from "date-fns";
 
 const formSchema = z
   .object({
@@ -22,10 +24,12 @@ const formSchema = z
   });
 
 export default function BookingForm({ onSubmit, isLoading, hotelId }) {
-  const today = new Date().toISOString().split("T")[0];
-  const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split("T")[0];
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+
+  const getISODate = (date) => date.toISOString().split("T")[0];
+  const today = getISODate(todayDate);
+  const tomorrow = getISODate(addDays(todayDate, 1));
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -34,6 +38,30 @@ export default function BookingForm({ onSubmit, isLoading, hotelId }) {
       checkOut: tomorrow,
     },
   });
+
+  const checkInValue = form.watch("checkIn");
+  const checkOutValue = form.watch("checkOut");
+
+  const handleRangeSelect = ({ checkIn, checkOut }) => {
+    if (checkIn) {
+      form.setValue("checkIn", checkIn, { shouldDirty: true, shouldTouch: true });
+    }
+
+    if (checkOut) {
+      form.setValue("checkOut", checkOut, {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+    } else if (checkIn) {
+      const fallbackCheckout = getISODate(addDays(new Date(checkIn), 1));
+      form.setValue("checkOut", fallbackCheckout, {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+    }
+
+    form.trigger(["checkIn", "checkOut"]);
+  };
 
   const handleSubmit = (values) => {
     onSubmit({
@@ -45,6 +73,18 @@ export default function BookingForm({ onSubmit, isLoading, hotelId }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <div className="space-y-2">
+          <FormLabel>Stay Dates</FormLabel>
+          <DateRangePicker
+            checkIn={checkInValue}
+            checkOut={checkOutValue}
+            minDate={todayDate}
+            onSelect={handleRangeSelect}
+          />
+          <p className="text-xs text-muted-foreground">
+            Select your check-in and check-out dates using the calendar or the inputs below.
+          </p>
+        </div>
         <FormField
           control={form.control}
           name="checkIn"
@@ -57,6 +97,10 @@ export default function BookingForm({ onSubmit, isLoading, hotelId }) {
                   className="border rounded-md px-3 py-2"
                   min={today}
                   {...field}
+                  onChange={(event) => {
+                    field.onChange(event);
+                    form.trigger("checkOut");
+                  }}
                 />
               </FormControl>
               <FormMessage />
@@ -73,7 +117,7 @@ export default function BookingForm({ onSubmit, isLoading, hotelId }) {
                 <input
                   type="date"
                   className="border rounded-md px-3 py-2"
-                  min={form.watch("checkIn") || today}
+                  min={checkInValue || today}
                   {...field}
                 />
               </FormControl>
@@ -88,5 +132,3 @@ export default function BookingForm({ onSubmit, isLoading, hotelId }) {
     </Form>
   );
 }
-
-

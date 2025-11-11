@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAddReviewMutation, useCreateBookingMutation, useGetHotelByIdQuery } from "@/lib/api";
-import { useUser } from "@clerk/clerk-react";
 import { Building2, Coffee, MapPin, PlusCircle, Star, Tv, Wifi } from "lucide-react";
 import { useParams } from "react-router";
 import { BookingDialog } from "@/components/BookingDialog";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 
 const HotelDetailsPage = () => {
   const { _id } = useParams();
@@ -16,8 +16,6 @@ const HotelDetailsPage = () => {
   const [createBooking, { isLoading: isCreateBookingLoading }] = useCreateBookingMutation();
   const navigate = useNavigate();
 
-  const { user } = useUser();
-
   const handleAddReview = async () => {
     try {
       await addReview({
@@ -25,18 +23,30 @@ const HotelDetailsPage = () => {
         comment: "This is a test review",
         rating: 5,
       }).unwrap();
-    } catch (error) {}
+      toast.success("Review added");
+    } catch (error) {
+      const message =
+        error?.data?.message || "Unable to submit your review right now.";
+      toast.error(message);
+    }
   };
 
   const handleBook = async (bookingData) => {
+    const toastId = toast.loading("Creating your booking...");
     try {
       const result = await createBooking({
         hotelId: _id,
         checkIn: bookingData.checkIn,
         checkOut: bookingData.checkOut,
       }).unwrap();
+      toast.success(`Room ${result.roomNumber} reserved`, { id: toastId });
       navigate(`/booking/payment?bookingId=${result._id}`);
-    } catch (error) {}
+    } catch (error) {
+      const message =
+        error?.data?.message || "Unable to create booking. Please try again.";
+      toast.error(message, { id: toastId });
+      throw error;
+    }
   };
 
   if (isLoading) {

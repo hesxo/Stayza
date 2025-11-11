@@ -1,15 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/clerk-react";
 import { Globe, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import { Link } from "react-router";
 
 function Navigation() {
-  //   const { user } = useUser();
+  const { user } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  //   const menuRef = useRef(null);
-    // const buttonRef = useRef(null);
 
   // Close menu when clicking outside
   //   useEffect(() => {
@@ -118,7 +115,6 @@ function Navigation() {
         {/* Mobile Menu Button */}
         <div className="relative md:hidden">
           <Button
-            // ref={buttonRef}
             variant="ghost"
             size="icon"
             className="relative z-20"
@@ -138,7 +134,6 @@ function Navigation() {
           {/* Dropdown Menu */}
           {isMenuOpen && (
             <div
-              ref={menuRef}
               className="absolute right-0 mt-2 w-56 rounded-xl bg-black border border-gray-800 shadow-lg py-2 px-3 animate-in fade-in slide-in-from-top-5 duration-200 z-50"
               style={{ top: "calc(100% + 8px)" }}
             >
@@ -198,7 +193,7 @@ function Navigation() {
                   asChild
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <a to="/sign-up">Sign Up</a>
+                  <Link to="/sign-up">Sign Up</Link>
                 </Button>
                 {/* <SignedIn>
                   <Button
