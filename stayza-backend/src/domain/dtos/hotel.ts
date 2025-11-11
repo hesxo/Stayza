@@ -9,5 +9,5 @@ export const CreateHotelDTO = z.object({
 });
 
 export const SearchHotelDTO = z.object({
-  query: z.string().min(1),
+  query: z.string().trim().min(1, "Search query is required"),
 });

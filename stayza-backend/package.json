@@ -1,32 +1,30 @@
 {
-  "name": "stayza-backend",
+  "name": "aidf-5-back-end",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npx ts-node src/index.ts",
-    "seed": "npx ts-node src/seed.ts",
-    "build": "tsc",
-    "start": "node dist/index.js"
+    "dev": "nodemon src/index.ts",
+    "seed": "ts-node src/seed.ts",
+    "build": "npm install && tsc",
+    "start": "node ./dist/index.js"
   },
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "@clerk/express": "^1.7.30",
-    "ai": "^5.0.65",
+    "@clerk/express": "^1.7.21",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.2",
+    "dotenv": "^17.2.0",
     "express": "^5.1.0",
-    "mongoose": "^8.18.0",
-    "open": "^10.2.0",
-    "openai": "^6.3.0",
-    "zod": "^4.1.12"
+    "mongoose": "^8.16.3",
+    "openai": "^5.19.1",
+    "stripe": "^16.12.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/node": "^24.3.3",
-    "nodemod": "^3.0.6",
+    "@types/node": "^24.3.0",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"

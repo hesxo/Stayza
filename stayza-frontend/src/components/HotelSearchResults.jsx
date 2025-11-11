@@ -3,19 +3,27 @@ import { useGetHotelsBySearchQuery } from "@/lib/api";
 import { Skeleton } from "./ui/skeleton";
 import { useSelector } from "react-redux";
 
-function HotelListings() {
+function HotelSearchResults() {
   const query = useSelector((state) => state.search.query);
+  const trimmedQuery = query.trim();
+  const shouldSkip = trimmedQuery.length === 0;
 
   const {
     data: hotels,
     isLoading: isHotelsLoading,
     isError: isHotelsError,
     error: hotelsError,
-  } = useGetHotelsBySearchQuery(query);
+  } = useGetHotelsBySearchQuery(trimmedQuery, {
+    skip: shouldSkip,
+  });
 
   const isLoading = isHotelsLoading;
   const isError = isHotelsError;
   const error = [hotelsError];
+
+  if (shouldSkip) {
+    return null;
+  }
 
   if (isLoading) {
     return (
@@ -36,13 +44,19 @@ function HotelListings() {
 
   return (
     <section className="px-8 py-8 lg:py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-4">
-        {hotels.map((hotel) => {
-          return <HotelCard key={hotel._id} hotel={hotel} />;
-        })}
-      </div>
+      {hotels?.length ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-4">
+          {hotels.map((hotel) => {
+            return <HotelCard key={hotel._id} hotel={hotel} />;
+          })}
+        </div>
+      ) : (
+        <p className="text-muted-foreground text-center">
+          No stays found for “{trimmedQuery}”. Try another keyword.
+        </p>
+      )}
     </section>
   );
 }
 
-export default HotelListings;
+export default HotelSearchResults;

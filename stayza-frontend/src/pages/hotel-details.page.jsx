@@ -2,15 +2,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAddReviewMutation, useGetHotelByIdQuery } from "@/lib/api";
+import { useAddReviewMutation, useCreateBookingMutation, useGetHotelByIdQuery } from "@/lib/api";
 import { useUser } from "@clerk/clerk-react";
 import { Building2, Coffee, MapPin, PlusCircle, Star, Tv, Wifi } from "lucide-react";
 import { useParams } from "react-router";
+import { BookingDialog } from "@/components/BookingDialog";
+import { useNavigate } from "react-router";
 
 const HotelDetailsPage = () => {
   const { _id } = useParams();
   const { data: hotel, isLoading, isError, error } = useGetHotelByIdQuery(_id);
   const [addReview, { isLoading: isAddReviewLoading }] = useAddReviewMutation();
+  const [createBooking, { isLoading: isCreateBookingLoading }] = useCreateBookingMutation();
+  const navigate = useNavigate();
 
   const { user } = useUser();
 
@@ -21,6 +25,17 @@ const HotelDetailsPage = () => {
         comment: "This is a test review",
         rating: 5,
       }).unwrap();
+    } catch (error) {}
+  };
+
+  const handleBook = async (bookingData) => {
+    try {
+      const result = await createBooking({
+        hotelId: _id,
+        checkIn: bookingData.checkIn,
+        checkOut: bookingData.checkOut,
+      }).unwrap();
+      navigate(`/booking/payment?bookingId=${result._id}`);
     } catch (error) {}
   };
 
@@ -155,12 +170,12 @@ const HotelDetailsPage = () => {
             >
               <PlusCircle className="w-4 h-4" /> Add Review
             </Button>
-            {/* <BookingDialog
+            <BookingDialog
               hotelName={hotel.name}
-              hotelId={id}
+              hotelId={_id}
               onSubmit={handleBook}
               isLoading={isCreateBookingLoading}
-            /> */}
+            />
           </div>
         </div>
       </div>

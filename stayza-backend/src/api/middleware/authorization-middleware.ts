@@ -4,9 +4,8 @@ import ForbiddenError from "../../domain/errors/forbidden-error";
 
 const isAdmin = (req: Request, res: Response, next: NextFunction) => {
   const auth = getAuth(req);
-  const role = (auth?.sessionClaims?.metadata as any)?.role;
 
-  if (role !== "admin") {
+  if (auth?.sessionClaims?.metadata?.role !== "admin") {
     throw new ForbiddenError("Forbidden");
   }
   next();
