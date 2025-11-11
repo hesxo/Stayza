@@ -2,21 +2,21 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import RootLayout from "./layouts/root-layout.page.jsx";
-import HomePage from "./pages/home.page.jsx";
-import HotelDetailsPage from "./pages/hotel-details.page.jsx";
-import HotelsPage from "./pages/hotels.page.jsx";
-import PaymentPage from "./pages/payment.page.jsx";
-import CompletePage from "./pages/complete.page.jsx";
-import NotFoundPage from "./pages/not-found.page.jsx";
-import SignInPage from "./pages/sign-in.page.jsx";
-import SignUpPage from "./pages/sign-up.page.jsx";
-import MyAccountPage from "./pages/my-account.page.jsx";
+import HomePage from "./views/home.page.jsx";
+import HotelDetailsPage from "./views/hotel-details.page.jsx";
+import HotelsPage from "./views/hotels.page.jsx";
+import PaymentPage from "./views/payment.page.jsx";
+import CompletePage from "./views/complete.page.jsx";
+import NotFoundPage from "./views/not-found.page.jsx";
+import SignInPage from "./views/sign-in.page.jsx";
+import SignUpPage from "./views/sign-up.page.jsx";
+import MyAccountPage from "./views/my-account.page.jsx";
 
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { store } from "./lib/store";
 import AdminProtectLayout from "./layouts/admin-protect.layout.jsx";
-import CreateHotelPage from "./pages/admin/create-hotel.page.jsx";
+import CreateHotelPage from "./views/admin/create-hotel.page.jsx";
 
 import { ClerkProvider } from "@clerk/clerk-react";
 
