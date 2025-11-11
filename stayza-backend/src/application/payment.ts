@@ -7,6 +7,35 @@ import Hotel from "../infrastructure/entities/Hotel";
 
 const FRONTEND_URL = (process.env.FRONTEND_URL as string) || "http://localhost:5173";
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
+type HotelDocument = InstanceType<typeof Hotel>;
+
+async function ensureStripePriceForHotel(hotel: HotelDocument) {
+  if (hotel.stripePriceId) {
+    return hotel.stripePriceId;
+  }
+
+  const product = await stripe.products.create({
+    name: hotel.name,
+    description: hotel.description,
+    default_price_data: {
+      unit_amount: Math.round(hotel.price * 100),
+      currency: "usd",
+    },
+  });
+
+  const defaultPriceId =
+    typeof product.default_price === "string"
+      ? product.default_price
+      : (product.default_price as { id?: string })?.id;
+
+  if (!defaultPriceId) {
+    throw new Error("Unable to determine default Stripe price ID");
+  }
+
+  hotel.stripePriceId = defaultPriceId;
+  await hotel.save();
+  return defaultPriceId;
+}
 
 export const createCheckoutSession = async (req: Request, res: Response) => {
   try {
@@ -42,11 +71,8 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
       (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24)
     );
 
-    // Require stored price and use price + quantity only
-    if (!hotel.stripePriceId) {
-      return res.status(400).json({ message: "Stripe price ID is missing for this hotel" });
-    }
-    const lineItem = { price: hotel.stripePriceId, quantity: numberOfNights } as const;
+    const stripePriceId = await ensureStripePriceForHotel(hotel);
+    const lineItem = { price: stripePriceId, quantity: numberOfNights } as const;
 
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
