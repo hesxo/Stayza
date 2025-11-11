@@ -48,7 +48,7 @@ function Navigation() {
     <nav className="z-50 bg-black/90 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 text-white py-3 rounded-full mx-4 my-3 relative">
       <div className="flex items-center space-x-8">
         <Link to="/" className="text-xl font-bold">
-          Horizone
+          Stayza
         </Link>
         <div className="hidden md:flex space-x-6">
           <Link to={`/`} className="transition-colors text-sm">
