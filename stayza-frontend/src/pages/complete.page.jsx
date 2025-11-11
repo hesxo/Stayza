@@ -8,7 +8,23 @@ function CompletePage() {
   const sessionId = searchParams.get("session_id");
 
   const { data, isLoading, isError } =
-    useGetCheckoutSessionStatusQuery(sessionId);
+    useGetCheckoutSessionStatusQuery(sessionId, { skip: !sessionId });
+
+  if (!sessionId) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md text-center">
+        <h2 className="text-2xl font-bold mb-4">Missing payment information</h2>
+        <p className="mb-4">
+          We could not determine which checkout session to validate. Please
+          reopen your confirmation link or return to the payment page to start
+          again.
+        </p>
+        <Button asChild className="mt-6">
+          <Link to="/">Return Home</Link>
+        </Button>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -18,7 +34,7 @@ function CompletePage() {
     );
   }
 
-  if (isError) {
+  if (isError || !data) {
     return (
       <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md text-center">
         <h2 className="text-2xl font-bold mb-4 text-red-600">
@@ -28,20 +44,45 @@ function CompletePage() {
           We couldn't process your payment information. Please try again or
           contact support.
         </p>
-        <Button asChild className="mt-6">
-          <Link to={`/booking/payment?bookingId=${data?.bookingId || ""}`}>
-            Return to Payment Page
-          </Link>
+        <Button
+          asChild
+          className="mt-6"
+        >
+          <Link to="/">Return Home</Link>
         </Button>
       </div>
     );
   }
 
+  const bookingId = data.booking?._id || data.bookingId || "";
+
   if (data?.status === "open") {
-    return <Navigate to={`/booking/payment?bookingId=${data?.bookingId}`} />;
+    return <Navigate to={`/booking/payment?bookingId=${bookingId}`} />;
   }
 
-  if (data?.status === "complete") {
+  if (data.booking?.paymentStatus === "FAILED" || data.status === "expired") {
+    return (
+      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md text-center">
+        <h2 className="text-2xl font-bold mb-4 text-red-600">
+          Payment could not be completed
+        </h2>
+        <p className="mb-4 text-gray-700">
+          Your booking is still reserved but we were unable to confirm the payment. You can try
+          again or choose a different payment method.
+        </p>
+        <div className="flex flex-col md:flex-row gap-3 justify-center mt-6">
+          <Button asChild variant="outline">
+            <Link to="/">Return Home</Link>
+          </Button>
+          <Button asChild>
+            <Link to={`/booking/payment?bookingId=${bookingId}`}>Try Again</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (data?.status === "complete" && data.booking?.paymentStatus === "PAID") {
     const checkInDate = new Date(data.booking.checkIn);
     const checkOutDate = new Date(data.booking.checkOut);
     const formattedCheckIn = format(checkInDate, "MMM dd, yyyy");
@@ -178,13 +219,20 @@ function CompletePage() {
         We couldn't determine the status of your payment. If you completed a
         booking, please check your email for confirmation.
       </p>
-      <Button asChild className="mt-6">
-        <Link to="/">Return to Home</Link>
-      </Button>
+      <div className="flex flex-col md:flex-row gap-3 justify-center mt-6">
+        <Button asChild variant="outline">
+          <Link to="/">Return Home</Link>
+        </Button>
+        {bookingId && (
+          <Button asChild>
+            <Link to={`/booking/payment?bookingId=${bookingId}`}>
+              Go to Payment
+            </Link>
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
 
 export default CompletePage;
-
-
